@@ -141,12 +141,13 @@
 \usepackage{multirow}
 \usepackage{subfig}
 \usepackage{algorithm}
+\usepackage{balance}
 
 
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 % Do not put math or special symbols in the title.
-\title{Adaptive Video Streaming System with PID-Based Quality Control and Optimized Bitstream Extraction}
+\title{Adaptive Video Streaming with PID-Based Quality Control and Optimized Bitstream Extraction}
 
 % author names and IEEE memberships
 % note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
@@ -158,9 +159,9 @@
 %
 \author{Shengbin~Meng,~Jun~Sun,~Yizhou~Duan~and~Zongming~Guo % <-this % stops a space
 \thanks{S. Meng is with the Institute of Computer Science and Technology, Peking University, Beijing%
-, 100080 China e-mail: shengbin@pku.edu.cn.}% <-this % stops a space
+, China, 100080. E-mail: shengbin@pku.edu.cn.}% <-this % stops a space
 \thanks{J. Sun, Y. Duan, Z. Guo are with the Institute of Computer Science and Technology, Peking University.}% <-this % stops a space
-\thanks{Manuscript received September 15, 2014}}
+}%\thanks{Manuscript received September 15, 2014}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
 % these prevent an unwanted space from occurring between the last author name
@@ -211,9 +212,9 @@
 
 \begin{document}
 
-\listoffigures
+%\listoffigures
 
-\listoftables
+%\listoftables
 
 
 % make the title area
@@ -263,15 +264,15 @@ video streaming, quality control, bitstream extraction, distortion model, Scalab
 
 One of the biggest challenge for video streaming is the variety of users' network environment. A user may use different types of network (Ethernet, Wi-Fi, Cellular, etc) and may also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth may change from time to time, influenced by the overall traffic. During such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the client to keep a non-paused smooth playing. Therefore, to achieve better watching experience for users with various network environment, the video's bitrate or quality should be able to adjust according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
 
-There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, which allows efficient scalability of video bitrate and quality with only one single bitstream. The generally-known term SVC usually refers to the scalable extension of the H.264/AVC video coding standard \cite{SVCOverview}. In SVC, a video bitstream is composed of Network Abstract Layer Units (NALUs), which are separated into multiple layers: one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
+There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, which allows efficient scalability of video bitrate and quality with only one single bitstream. The generally-known term SVC usually refers to the scalable extension of the H.264/AVC video coding standard \cite{SVCOverview}. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into multiple layers: one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
 
-The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity simulcast provides is strictly limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. An SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), and thus can provide seamless scalability and adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, SVC is considered to be a better choice for adaptive video streaming systems. While our work in this paper can be partly used in a simulcast system, we will mainly focus on building an adaptive streaming system using SVC.
+The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most existing video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity simulcast provides is strictly limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. An SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), and thus can provide seamless scalability and adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, SVC is considered to be a better choice for adaptive video streaming systems. While our work in this paper can be partly used in a simulcast system, we will mainly focus on building an adaptive streaming system using SVC.
 
 To guarantee good performance of SVC streaming system, there are two important issues that need to be addressed well. First is quality control, and the second is bitstream extraction. Quality control means controlling the video quality (as well as the bitrate) to follow the change of bandwidth. Once the bandwidth has changed, the quality control algorithm should determine a bitrate suitable for the current bandwidth. Given this bitrate, how to extract data from the whole SVC stream to form an optimal sub-stream becomes the bitstream extraction problem. Optimized bitstream extraction aims to select a subset of NALUs (or packets) which represents video with best quality, or minimal distortion, under the constrain of the given bitrate. It should be noted that, bitstream extraction is not only useful in adaptive video streaming, but also in other SVC application scenarios where part of data needs to be obtained or kept, e.g., the archiving of surveillance video.
 
 In this paper, we propose novel solutions for these two issues and construct an efficient adaptive video streaming system. Apple Darwin Streaming Server (DSS) \cite{DSS}, which has been widely used to collect, cache, schedule and transmit multimedia contents in practice, is chosen as the basis of the system. We modified the original DSS project and added SVC support to it, for the purpose of both research and application. A new quality control algorithm based on the Proportional-Integral-Derivative (PID) control concept is proposed to replace the native one in DSS, and achieves higher average quality level with less quality fluctuation. For the bitstream extraction problem, we propose a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated. This model enables us to accurately estimate the distortion caused by discarding any combination of packets. Based on that, we design a greedy algorithm to assign priority for each quality enhancement packet according to its rate-distortion (R-D) impact. The priority value of each packet can be stored in the bitstream and used for optimized extraction. The proposed algorithms perform well in experiments and the quality control algorithm is also implemented in the practical streaming system we construct and proved quite effective.
 
-The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:quality-control}, the proposed quality control algorithm is formulated and explained with term definitions and parameters selection. After that, we propose the solution for the bitstream extraction problem in \ref{sec:bit-extraction}. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
+The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:quality-control}, the proposed quality control algorithm is formulated and explained with term definitions and parameters selection. After that, we propose the solution for the bitstream extraction problem in section \ref{sec:bit-extraction}. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,15 +291,15 @@ In DSS, quality control is implemented by monitoring packet delay (the differenc
 
 \subsection{Bitstream Extraction}
 
-SVC bitstream extraction is substantially a combinatorial optimization problem. More specifically, it is in the form of ``0-1 Knapsack Problem". Each NALU data packet can be treated as an object with certain value (its contribution to the video quality) and weight (its size). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream; or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
+SVC bitstream extraction is substantially a combinatorial optimization problem. More specifically, it is in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. In the ``0-1 Knapsack Problem", given a set of objects, each with a weight and a value, one decides which object to include in the knapsack so that the total weight is no more than a given limit and the total value is as large as possible. Similarly, in bitstream extraction problem, each NALU data packet can be treated as an item with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
 
 Generally, the optimal solution of a typical ``0-1 Knapsack Problem" can be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between packets. First, the value of a packet is not obvious and certain, since a packet's contribution to video quality may depend on the other packets. Second, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
 
 In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM  \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is  a training-based model, more computation is needed to get robust model parameters.
 
-In our previous work \cite{Zhang12}, we noticed the mismatch between quadratic calculations in distortion criteria like MSE or PSNR and the essential linear operations in the coding process, and proposed a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated. The linear error model exploits the linear feature of pixel value errors and achieves good performance in distortion estimation and bitstream extraction with reference. However, this work assumes that the original video sequence is available for reference, which is not always true. Adaptation to handle the special characteristic of the no-reference case is lacking, and is included in this paper.
+In our previous work \cite{Zhang12}, we noticed the mismatch between quadratic calculations in distortion criteria like MSE or PSNR and the essential linear operations in the coding process, and proposed a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated. The linear error model exploits the linear feature of pixel value errors and achieves good performance in distortion estimation and bitstream extraction with reference. However, this work assumes that the original video sequence is available for reference, which is not always true. Adaptation to handle the special characteristic of the no-reference case is lacking in the previous work and included in this paper.
 
-The following of this paper will present solutions for the above problems, and lay a solid foundation for a practical adaptive video streaming system.
+The following of this paper will present solutions for the above problems in detail. We have published the related ideas in conference papers \cite{Meng14}\cite{Meng14-PID}, and in this paper we combine our previous works together and lay a solid foundation for a practical adaptive video streaming system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PID-based Quality Control Algorithm}
@@ -339,7 +340,7 @@ The \textit{actual\_check interval ratio} is suitable for quality control becaus
 \subsection{Model Formulation}
 \label{subsec:model}
 
-As is introduced above, the \textit{actual\_check interval ratio} serves as the process variable in this PID-based quality control algorithm. In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that our process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in original PID equations have been changed to division operations to keep the correctness, as follows:
+As is introduced above, the \textit{actual\_check interval ratio} serves as the process variable in this PID-based quality control algorithm. In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that the chosen process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in original PID equations have been changed to division operations to keep the correctness, as follows:
 
 \begin{equation}
 \label{eq:ut}
@@ -406,7 +407,7 @@ The whole process of this algorithm is described in Algorithm \ref{algo:control}
 \subsection{Parameter Selection}
 \label{subsec:parameter}
 
-Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. Note that, in the quality control algorithm, only the data rate and the bandwidth are considered, not the video content, so once the parameters are tuned they should apply well to different video streams.
+Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content, so once the parameters are tuned they should apply well to different video streams.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -473,7 +474,7 @@ The above model is called Linear Error Model (LEM). Note that in equations (\ref
  \caption{Group of pictures (GOP) in SVC \label{fig:GOP_Structure}}
  \end{figure}
  
- Consider a video bitstream with 8-frame GOPs (Group of Pictures) shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame''\cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). So the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with JSVM reference software\cite{H264Overview}. Since computation is mainly consumed with this decoding in our bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
+ Consider a video bitstream with 8-frame GOPs (Group of Pictures) shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame''\cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). So the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with the Quality Layer information acquisition in JSVM \cite{Amonou07}. Since computation is mainly consumed with this decoding in the bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
  
 \subsection{Distortion Estimation And Model Verification}
 
@@ -483,11 +484,11 @@ For example, consider a video sequence decoded from a sub-stream which is extrac
 
 	\begin{equation}
 	\label{eq:subset_error}
-e(I_x) = e_{full} + \sum_{i \in {I_x}} e_i \: . 
+e(I_x) = e_{full} + \sum_{i \in {I_x}} e_i \: .
 	\end{equation}
 Eq. (\ref{eq:subset_error}) has taken into consideration the error between the video sequence decoded from full enhancement packets and the original sequence, written as $e_{full}$.
 
-To verify the linear error model, we conduct an experiment where some random sets of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion. Experimental result of the sequence {\em Foreman} is partly shown in Fig. \ref{fig:linear_verification}. The horizontal axis stands for sample point numbers of those random selections, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a randomly extracted substream, and the dot line shows the estimated MSE using our Linear Error Model. A 0.6\% maximum relative error of MSE demonstrates the accuracy of the proposed model.
+To verify the linear error model, we conduct an experiment where possible combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. The video stream has 8-frame GOPs and three quality layers, the same as illustrated in Fig. \ref{fig:GOP_Structure}. Experimental result of the sequence {\em Foreman} is partly shown in Fig. \ref{fig:linear_verification}. The horizontal axis stands for sample point numbers of those possible combinations, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a randomly extracted substream, and the dot line shows the estimated MSE using our Linear Error Model. A 0.6\% maximum relative error of MSE demonstrates the accuracy of the proposed model.
 
 \begin{figure}[h]
 \centering
@@ -545,7 +546,7 @@ We have presented experimental results for the case where reference original seq
 \section{Experimental Results}
 \label{sec:experiment}
 
-To implement our proposed scalable streaming system requires the combination of the PID-based quality control algorithm and the optimized bitstream extraction method. The former determines the current bitrate to follow the bandwidth change, and the latter will ensure the sub-stream with the best possible quality is sent under that bitrate constrain. They work together to construct a system that delivers best quality of experience for the users. We have integrated the PID-based quality control algorithm into DSS. However, the integration of the proposed bitstream extraction method needs more engineering work and has not been accomplished. Therefore, in this section, we present separate experiments to demonstrate the advantage of each proposed solution.
+To implement our proposed scalable streaming system requires the combination of the PID-based quality control algorithm and the optimized bitstream extraction method. The former determines the current bitrate to follow the bandwidth change, and the latter will ensure the sub-stream with the best possible quality is sent under that bitrate constrain. They work together to construct a system that delivers best quality of experience for the users. We have integrated the PID-based quality control algorithm into DSS. However, the integration of the proposed bitstream extraction method needs more engineering work and has not been accomplished. Therefore, in this section, we only present separate experiments to demonstrate the advantage of each proposed solution. Readers who are interested in the practical implementation are encouraged to visit the online video website http://www.7dlive.com for more information.
 
 \subsection{Experiments for Quality Control}
 
@@ -764,6 +765,9 @@ http://dss.macosforge.org/
 \bibitem{Gao06}
 K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', in {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
 
+\bibitem{Knapsack}
+http://en.wikipedia.org/wiki/Knapsack\_problem
+
 \bibitem{Schierl10}
 Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', in {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
 
@@ -781,6 +785,12 @@ E.~Maani, A.~K. Katsaggelos, ``Optimized Bit Extraction Using Distortion Modelin
 
 \bibitem{Zhang12}
 W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model,'' {\em 2012 IEEE International Symposium on Circuits and Systems}, pp.~1887--1890, Seoul, Korea, May 2012.
+
+\bibitem{Meng14}
+Shengbin Meng, Jun Sun, Yizhou Duan, Zongming Guo, ``An Efficient Method For No-Reference H.264/SVC Bitstream Extraction'', {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, Florence, Italy, May, 2014.
+
+\bibitem{Meng14-PID}
+Shengbin Meng, Jun Sun, Yilei Wang, Zongming Guo, ``A PID-based Quality Control Algorithm for SVC Video Streaming'', {\em IEEE International Conference on Communications}, Sydney, Australia, June, 2014.
 
 \bibitem{PID}
 http://en.wikipedia.org/wiki/PID\_controller
@@ -821,7 +831,7 @@ G.~J.~Sullivan, J.-R.~Ohm, W.-J.~Han, and T.~Wiegand, ``Overview of the High Eff
 
 \end{thebibliography}
 
-
+\balance
 
 % that's all folks
 \end{document}
