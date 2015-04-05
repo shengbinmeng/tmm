@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-This paper proposes an adaptive video streaming system that adjusts the video quality according to available bandwidth and gives the user best quality of service under various network conditions. Two key problems within the system are analyzed and solved with novel algorithms. First, we utilize the Proportional-Integral-Derivative (PID) method in video quality control to determine a suitable bitrate for transmission, so that the system can deliver highest video quality with least quality fluctuation. Second, to select an optimal sub-stream for transmission under given bitrate constraint, we use a linear error model to estimate the distortion caused by discarding any combination of data packets, and a greedy algorithm scheme to assign each data packet a priority value for Rate-Distortion optimized extraction. Experimental results show that the PID-based quality control algorithm brings 8.6\% higher video quality as well as 24.8\% lower quality fluctuation than the baseline algorithm, and the bitstream extraction method achieves a PSNR gain of up to 0.5dB compared to existing reference extractors, with no computational complexity increment. The system is currently running at the online video website www.7dlive.com and proves to be practically effective.
+In order to give the user best quality of service under bandwidth fluctuation, video streaming systems should be able to adjust the video quality according to available bandwidth. In this paper we propose novel models and algorithms to enable such an adaptive video streaming system which adopts the Scalable Video Coding (SVC) technology. First, we utilize the Proportional-Integral-Derivative (PID) method in quality control to determine a suitable transmission bitrate according to actual bandwidth condition. By considering bandwidth information of the past, the current and even the future, the PID-based quality control algorithm is able to deliver highest video quality with least quality fluctuation. Second, we present an efficient bitstream extraction scheme to select an optimal sub-stream from the whole SVC video bitstream under given bitrate constraint. A linear error model is used to accurately estimate the distortion caused by discarding any combination of data packets, and a greedy-like algorithm is designed to assign each data packet a priority value for Rate-Distortion optimized extraction. Experimental results show that comparing with the existing solutions, the PID-based quality control algorithm brings 8.6\% higher video quality with 24.8\% lower quality fluctuation, and the bitstream extraction method achieves a PSNR gain of up to 0.5dB with no computational complexity increment. The proposed algorithms are implemented in online video website www.7dlive.com and prove to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -337,7 +337,7 @@ The \textit{actual\_check interval ratio} is suitable for quality control becaus
 
 \begin{figure}[t]
 \centering
-\includegraphics[width = 0.9\linewidth]{intervals.jpg}
+\includegraphics[width = 0.9\linewidth]{Intervals.jpg}
 \caption{Two timelines in Darwin Streaming Sever (DSS) \label{fig:intervals}}
 \end{figure}
 
@@ -576,10 +576,10 @@ Since STP and LTP have their own limitations, we implement the PID-based quality
 
 \begin{figure*}[t]
 \subfloat[Average quality level of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{quality-all.jpg}
+\includegraphics[width=0.5\textwidth]{Quality-all.jpg}
 \label{fig:quality-all}}
 \subfloat[Variance of quality level of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{variance-all.jpg}
+\includegraphics[width=0.5\textwidth]{Variance-all.jpg}
 \label{fig:variance-all}}
 \caption{Comparison of the long/short time prediction and the PDF algorithm in DSS}
 \label{fig:performance-all}
@@ -588,10 +588,10 @@ Since STP and LTP have their own limitations, we implement the PID-based quality
 \begin{figure*}[t]
 \centering
 \subfloat[Variance of quality level of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{quality-two.jpg}
+\includegraphics[width=0.5\textwidth]{Quality-two.jpg}
 \label{fig:quality-two}}
 \subfloat[Average quality level of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{variance-two.jpg}
+\includegraphics[width=0.5\textwidth]{Variance-two.jpg}
 \label{fig:variance-two}}
 \caption{Comparison of the proposed PID algorithm and the PDF algorithm in DDS}
 \label{fig:performance-two}
@@ -615,7 +615,7 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 
 \begin{figure}[t]
 \centering
-\includegraphics[width = 0.9\linewidth]{fluctuation.jpg}
+\includegraphics[width = 0.9\linewidth]{Fluctuation.jpg}
 \caption{Video quality fluctuation with time \label{fig:fluctuation}}
 \end{figure}
 
@@ -628,35 +628,6 @@ In our experiments, all test bitstreams are encoded with the JSVM encoder, where
 The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:results}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
 
 Among other bitstream extraction methods besides that of JSVM, the work in \cite{Maani09} achieves much better performance than JSVM QL, and even better than ours. However, the method of \cite{Maani09} needs more computation in order to train robust model parameters for different sequences, while the complexity of our method is always the same with JSVM QL.
-
-\begin{comment}[8 mini-figures]
-\begin{figure*}[t]
-\begin{minipage}{0.5\linewidth}
-\centering
-\includegraphics[width = \linewidth]{City.jpg}
-\caption{City \label{fig:City}}
-\end{minipage}
-\begin{minipage}{0.5\linewidth}
-\centering
-\includegraphics[width = \linewidth]{Foreman.jpg}
-\caption{Foreman \label{fig:Foreman}}
-\end{minipage}
-\end{figure*}
-
-\begin{figure*}[t]
-\begin{minipage}{0.5\linewidth}
-\centering
-\includegraphics[width = \linewidth]{Harbour.jpg}
-\caption{Harbour \label{fig:Harbour}}
-\end{minipage}
-\begin{minipage}{0.5\linewidth}
-\centering 
-\includegraphics[width = \linewidth]{Soccer.jpg} 
-\caption{Soccer \label{fig:Soccer}}
-\end{minipage} 
-\end{figure*}
-
-\end{comment}
 
 \begin{figure*}[t]
 \centering
@@ -707,6 +678,22 @@ p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\cen
 \end{minipage}
 \end{table*}
 
+\subsection{Experiments for combined system}
+
+After combining the two algorithm together, we compared the proposed system's performance with the original DSS with JSVM Basic bitstream extraction. The result can be seen in 
+Fig. \ref{fig:fluctuation-psnr}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR.jpg}
+\caption{PSNR fluctuation with time \label{fig:fluctuation-psnr}}
+\end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR-wide.jpg}
+\caption{PSNR fluctuation with time \label{fig:fluctuation-psnr-wide}}
+\end{figure*}
 
 \section{Conclusion}
 \label{sec:conclusion}
