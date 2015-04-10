@@ -158,7 +158,7 @@
 % was not built to handle multiple paragraphs
 %
 \author{Shengbin~Meng,~Jun~Sun,~Yizhou~Duan~and~Zongming~Guo,~\em{Member,~IEEE} % <-this % stops a space
-\thanks{Manuscript received Febrary 15, 2015.}
+\thanks{Manuscript received April 10, 2015.}
 \thanks{The authors are with the Institute of Computer Science and Technology, Peking University, Beijing%
 , 100080, China (e-mail: shengbin@pku.edu.cn; sunjun@pku.edu.cn; duanyizhou@pku.edu.cn; guozongming@pku.edu.cn).}}
 
@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-In order to give the user best quality of service under bandwidth fluctuation, video streaming systems should be able to adjust the video quality according to available bandwidth. In this paper we propose novel models and algorithms to enable such an adaptive video streaming system which adopts the Scalable Video Coding (SVC) technology. First, we utilize the Proportional-Integral-Derivative (PID) method in quality control to determine a suitable transmission bitrate according to actual bandwidth condition. By considering bandwidth information of the past, the current and even the future, the PID-based quality control algorithm is able to deliver highest video quality with least quality fluctuation. Second, we present an efficient bitstream extraction scheme to select an optimal sub-stream from the whole SVC video bitstream under given bitrate constraint. A linear error model is used to accurately estimate the distortion caused by discarding any combination of data packets, and a greedy-like algorithm is designed to assign each data packet a priority value for Rate-Distortion optimized extraction. Experimental results show that comparing with the existing solutions, the PID-based quality control algorithm brings 8.6\% higher video quality with 24.8\% lower quality fluctuation, and the bitstream extraction method achieves a PSNR gain of up to 0.5dB with no computational complexity increment. The proposed algorithms are implemented in online video website www.7dlive.com and prove to be practically effective.
+In order to give the user best quality of service under bandwidth fluctuation, video streaming systems should be able to adjust the video quality according to available bandwidth. In this paper we propose such an adaptive video streaming system which adopts the Scalable Video Coding (SVC) technology and integrates novel models and algorithms. First, we utilize the Proportional-Integral-Derivative (PID) method to control the video quality adjustment according to actual bandwidth condition. By considering bandwidth information of the past, the current and even the future, the PID-based quality control algorithm is able to determine a suitable bitrate for transmission and deliver highest video quality with least fluctuation. Second, we present an efficient scheme to extract an optimal sub-stream from the whole SVC video bitstream under given bitrate constraint. A linear error model is used to accurately estimate the distortion caused by discarding any combination of data packets, and a greedy-like algorithm is designed to assign each data packet a priority value for Rate-Distortion optimized extraction. Experimental results show that the PID-based quality control algorithm brings 8.6\% higher video quality with 24.8\% lower quality fluctuation comparing with the baseline algorithm, and the bitstream extraction method achieves a PSNR gain of up to 0.5dB with no computational complexity increment. Altogether, the system produces a higher and smoother PSNR curve representing the final video quality perceived by the user. The proposed system is also implemented in online video website www.7dlive.com and proves to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -263,17 +263,17 @@ video streaming, quality control, bitstream extraction, distortion model, Scalab
 
 One of the biggest challenge for video streaming is the variety of users' network environment. A user may use different types of network (Ethernet, Wi-Fi, Cellular, etc) and may also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth may change from time to time, influenced by the overall traffic. During such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the user to get best watching experience. To cope with this challenge, the video streaming system should be able to automatically adjust the video's bitrate or quality according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
 
-There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, which allows scalability of video bitrate and quality with only one single bitstream. The generally-known term SVC usually refers to the scalable extension of the H.264/AVC video coding standard \cite{SVCOverview}. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
+There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, an extension of the H.264/AVC video coding standard \cite{SVCOverview}, which allows scalability of video bitrate and quality with only one single bitstream. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
 
-The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, we choose to adopt SVC in our adaptive video streaming system. While the work of this paper can be partly used in a simulcast system, it will mainly focus on the adaptive streaming system using SVC.
+The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity that simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, we choose to adopt SVC in our adaptive video streaming system. While the work of this paper can be partly used in a simulcast system, it will mainly focus on the adaptive streaming system using SVC.
 
-In the SVC video streaming system, one scalable stream with enhancement data packets is produced according to actual requirement and stored at the server for streaming (how to configure and produce the stream is not in the scope of this paper). During the streaming process, there are two key problems that need to be addressed well. The first is quality control, and the second is bitstream extraction. Quality control means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. Once the bandwidth has changed, the quality control algorithm should determine a bitrate suitable for the current bandwidth. Given this bitrate, how to extract data from the whole SVC stream to form an optimal sub-stream becomes the bitstream extraction problem. Optimized bitstream extraction aims to select a subset of NALUs (or packets) which represents video with best quality, or minimal distortion, under the constrain of the given bitrate. It should be noted that, bitstream extraction is not only useful in adaptive video streaming, but also in other SVC application scenarios where part of data needs to be obtained or kept, e.g., the archiving of surveillance video.
+In the SVC video streaming system, one scalable video stream with enhancement data packets is produced according to actual requirement and stored at the server for streaming (how to configure and produce the stream is not in the scope of this paper; users are referred to \cite{JSVM}). During the streaming process, there are two key problems that need to be addressed well. The first is quality control, and the second is bitstream extraction. Quality control means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. Once the bandwidth has changed, the quality control algorithm should determine a bitrate suitable for the current bandwidth. Given this bitrate, how to extract data from the whole SVC stream to form an optimal sub-stream becomes the second problem, i.e., bitstream extraction problem. Optimized bitstream extraction aims to select a subset of NALUs (or packets) which represents video with best quality, or minimal distortion, under the constrain of the given bitrate. It should be noted that, bitstream extraction is not only useful in adaptive video streaming, but also in other SVC application scenarios where part of data needs to be obtained or kept, e.g., the archiving of surveillance video.
 
-In this paper, an efficient adaptive video streaming system based on SVC is proposed. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the system. The original DSS project is modified by us and SVC support is added to it, for the purpose of both research and application. Then novel algorithms are designed and implemented to better solve the two key problems mentioned above. The contributions of our work are threefold:
+In this paper, an efficient adaptive video streaming system based on SVC is proposed with the above two problems better solved. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the system. The original DSS project is modified by us and SVC support is added to it, for the purpose of both research and application. Then novel algorithms of quality control and bitstream extraction are designed and implemented to achieve significant improvement in terms of user-perceived video quality. The contributions of our work are threefold:
 \begin{itemize}
-\item A quality control algorithm based on the Proportional-Integral-Derivative (PID) control concept is proposed to replace the native one in DSS, and achieves higher average quality level with less quality fluctuation.
-\item A linear error model is proposed to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream.
-\item A greedy-like algorithm is designed to assign priority for each packet, thus enables optimized bitstream extraction.
+\item A quality control algorithm based on the Proportional-Integral-Derivative (PID) control concept is designed to replace the native one in DSS, and achieves higher average video quality with less quality fluctuation.
+\item A linear error model is proposed to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream, based on which a greedy-like bitstream extraction method is proposed and achieves PSNR gain of up to 0.5dB.
+\item The proposed novel solutions for quality control and bitstream extraction are combined together and result in a higher and smoother PSNR curve representing the final video quality perceived by the user.
 \end{itemize}
 
 The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:quality-control}, the proposed quality control algorithm is formulated and explained with term definitions and parameters selection. After that, we present the solution for the bitstream extraction problem in section \ref{sec:bit-extraction}, including the linear error model and the greed-like algorithm. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
@@ -283,7 +283,13 @@ The rest of this paper is organized as follows. In section \ref{sec:analysis}, w
 \section{Problem Analysis and Related Works}
 \label{sec:analysis}
 
-In this section, we analyze the two most concerned problems in SVC adaptive streaming, i.e., quality control and bitstream extraction, and introduce some existing related works on them.
+The two most concerned problems in SVC adaptive streaming, i.e., quality control and bitstream extraction, are illustrated in Fig. \ref{fig:problems}. In this section, we analyze the two problems in detail, and introduce some existing related works on them.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width = 0.9\linewidth]{Problems.jpg}
+\caption{Two key problems in adaptive video streaming\label{fig:problems}}
+\end{figure}
 
 \subsection{Quality Control}
 
@@ -411,14 +417,14 @@ The whole process of this algorithm is described in Algorithm \ref{algo:control}
 \subsection{Parameter Selection}
 \label{subsec:parameter}
 
-Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content, so once the parameters are tuned they should apply well to different video streams.
+Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content. Therefore once the parameters are tuned they should apply well to different video streams.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Optimized Bitstream Extraction Based on Linear Error Model}
 \label{sec:bit-extraction}
 
-Once the quality control algorithm determines an appropriate bitrate and sets a quality level accordingly, the system will send a packet only belonging to this new quality level (as described at the end of Algorithm \ref{algo:control}). For SVC videos, that means to extract a subset of packets from the whole bitstream. How to optimally choose this subset to achieve minimum distortion under the given bitrate is the key point of bitstream extraction problem. In this section, we propose a linear error mode and a greedy-like algorithm to solve this problem.
+After the quality control algorithm determines an appropriate bitrate and sets a quality level accordingly, the system will only send packets belonging to this new quality level (as described at the end of Algorithm \ref{algo:control}). For SVC videos, it means to extract a subset of packets from the whole bitstream. How to optimally choose this subset to achieve minimum distortion under the given bitrate is the key point of bitstream extraction problem. In this section, we propose a linear error mode and a greedy-like algorithm to solve this problem.
 
 \subsection{Linear Error Model for Quality Scalable Video}
 \label{sec:model}
@@ -470,6 +476,7 @@ The above model is called Linear Error Model (LEM). Note that in equations (\ref
 
 
 \subsection{Error Vector Acquisition}
+
  It would need too many decoding times to get the error vectors of all enhancement packets if we calculate them one at a time. In order to acquire error vectors of all enhancement packets efficiently, we separate all enhancement packets into several groups, such that in each group multiple error vectors can be obtained independently at the same time.
  
  \begin{figure}[h]
@@ -539,6 +546,7 @@ For long video sequences, an optimization window is usually needed, and the prio
 
 \subsection{The No-Reference Case}
 \label{subsec:noref}
+
 In some scenarios, the priority assignment and bitstream extraction needs to be conducted without access to the original YUV sequence. For example, if the bitstream extraction is not done at the encoding side, it's most likely that the original sequence is not available. This would make the bitstream extraction a more difficult problem, since the distortion is harder to obtain for lacking of reference signal. Comparing to the problem of SVC bitstream extraction with reference, this kind of ``no-reference bitstream extraction'' problem is actually more frequently encountered in real practice. In this subsection, we handle this no-reference problem as well and modify the proposed algorithm to meet the special characteristic caused by lacking of reference.
 
 In the no-reference case, since we do not have access to the original sequence, we can not get the error between the video sequence decoded from full enhancement packets and the original sequence, which is $e_{full}$ used above. A straightforward idea is to set $e_{full}$ to zero, meaning we calculate distortion with respect to the fully reconstructed signal, rather than to the original sequence. However, simply doing so causes the algorithm to perform badly in experiments. We find that, since discarding some enhancement packets will not bring much significant error relative to the fully reconstructed signal, the calculated PSNR values are too large to well represent the real distortion. To address this issue, instead of calculating PSNR, we directly use MSE of all pixels as the distortion criteria in the priority assignment algorithm. This proves to be a simple and effective solution, and the extraction performance turns out to be much better.
@@ -550,11 +558,12 @@ We have presented experimental results for the case where reference original seq
 \section{Experimental Results}
 \label{sec:experiment}
 
-To implement our proposed scalable streaming system requires the combination of the PID-based quality control algorithm and the optimized bitstream extraction method. The former determines the current bitrate to follow the bandwidth change, and the latter will ensure the sub-stream with the best possible quality is sent under that bitrate constrain. They work together to construct a system that delivers best quality of experience for the users. We have integrated the PID-based quality control algorithm into DSS. However, the integration of the proposed bitstream extraction method needs more engineering work and has not been accomplished. Therefore, in this section, we only present separate experiments to demonstrate the advantage of each proposed solution. Readers who are interested in the practical implementation are encouraged to visit the online video website http://www.7dlive.com for more information.
+To implement our proposed adaptive streaming system requires the combination of the PID-based quality control algorithm and the optimized bitstream extraction method. The former determines the current bitrate to follow the bandwidth change, and the latter will ensure the sub-stream with the best possible quality is obtained and sent under that bitrate constrain. They work together to construct a system that delivers best quality of experience for the users. Choosing DSS as the implementation basis, we have integrated the proposed algorithms into it for the purpose of both research and application. In this section, we first present separate experiments to demonstrate the advantage of each proposed solution, and then give the result when they are combined together. Readers who are interested in the practical implementation can also visit the online video website http://www.7dlive.com for more information.
 
 \subsection{Experiments for Quality Control}
+\label{subsec:exp-control}
 
-For simplicity and intuition, we combine the enhancement layers in the tested SVC video stream to construct quality levels (introduced in \ref{subsec:quality-level}) used in the quality control algorithm. The video stream is divided into several sub-streams, each of which is identified by the quality and temporal layer it contains, as illustrated in Table \ref{tab:sub-stream} (there are 3 layers in each scalability dimension; spatial scalability is not enabled). The quality level is defined as the sum of all sub-streams with ID equal or less than the level number. For example, quality level 3 would contain all sub-streams from 0 to 3, thus would include all temporal layers, but only the quality base layer 0. The tested stream has 9 quality levels from 0 to 8 (Table \ref{tab:sub-stream}), and a maximum bit rate of 1587 kbps at level 8. 
+For simplicity and intuition, we combine the enhancement layers in the tested SVC video stream to construct quality levels (introduced in \ref{subsec:quality-level}) used in the quality control algorithm. The video stream is divided into several sub-streams, each of which is identified by the quality and temporal layer it contains, as illustrated in Table \ref{tab:sub-stream} (there are 3 layers in each scalability dimension; spatial scalability is not enabled). The quality level is defined as the sum of all sub-streams with ID equal or less than the level number. For example, quality level 3 would contain all sub-streams from 0 to 3, thus would include all temporal layers, but only the quality base layer 0. The tested stream has 9 quality levels from 0 to 8 (see Table \ref{tab:sub-stream}), and a maximum bit rate of 1587 kbps at level 8. 
 
 \begin{table*}[t]
 \centering
@@ -678,29 +687,22 @@ p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\cen
 \end{minipage}
 \end{table*}
 
-\subsection{Experiments for combined system}
+\subsection{Result of the combined system}
 
-After combining the two algorithm together, we compared the proposed system's performance with the original DSS with JSVM Basic bitstream extraction. The result can be seen in 
-Fig. \ref{fig:fluctuation-psnr}.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR.jpg}
-\caption{PSNR fluctuation with time \label{fig:fluctuation-psnr}}
-\end{figure}
+After combining the two algorithms together, the proposed adaptive streaming system is able to deliver a higher and smoother video quality for the user. We compare the proposed system's performance with DSS that supports SVC but has its original quality control method and JSVM Basic bitstream extraction. The result for the same test stream as used in subsection \ref{subsec:exp-control} is present in Fig. \ref{fig:fluctuation-psnr}. It shows PSNR change perceived by the user when available bandwidth fluctuates around 800 kbps. It can be seen that, the proposed system has effectively avoided unnecessary quality drop (note the curve around time 50s and 350s) and been able to keep a relatively higher PSNR value (note the curve between time 450s and 600s).
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR-wide.jpg}
-\caption{PSNR fluctuation with time \label{fig:fluctuation-psnr-wide}}
+\caption{User-perceived PSNR change with time when bandwidth fluctuates \label{fig:fluctuation-psnr}}
 \end{figure*}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-In this paper, we propose an adaptive video streaming system with PID-based quality control algorithm and optimized bitstream extraction. The PID-based quality control algorithm has a flexible mechanism to determine the suitable quality level so that it gives an accurate and swift response to the bandwidth change. Comparing with the original algorithm in DSS, this algorithm has reduced quality fluctuation significantly to improve audience satisfaction. The bitstream extraction method we propose includes a linear error model to estimate the distortion caused by discarding any combination of packets and a greedy algorithm to assign priority to each data packet. The packets' priority values can then be stored in the bitstream and used for R-D optimized extraction. Experimental results show that the proposed method can achieve PSNR gain of up to 0.5dB compared to the JSVM QL extractor under the same bitrate constrain, also with the same computational complexity.
+In this paper, we propose an adaptive video streaming system with PID-based quality control algorithm and optimized bitstream extraction. The PID-based quality control algorithm has a flexible mechanism to determine the suitable quality level so that it gives an accurate and swift response to the bandwidth change. Comparing with the original algorithm in DSS, this algorithm has reduced quality fluctuation significantly to improve audience satisfaction. The bitstream extraction method includes a linear error model to estimate the distortion caused by discarding any combination of packets and a greedy algorithm to assign priority to each data packet. The packets' priority values can then be stored in the bitstream and used for R-D optimized extraction. Experimental results show that the proposed method can achieve PSNR gain of up to 0.5dB compared to the JSVM QL extractor under the same bitrate constrain, also with the same computational complexity. The SVC streaming system integrated with these two solutions performs well in automatically adapting to the user's bandwidth fluctuation, and is able to give the user a better watching experience.
 
-The PID-based quality control algorithm of this paper has already been integrated into the online website www.7dlive.com and performs well in automatically adapting to the user's bandwidth fluctuation. This algorithm can also be easily used in other streaming systems, e.g., DASH systems. For the bitstream extraction method, there is future work to be done in the following two directions. First, we strive to integrate the bitstream extraction method into DSS, and combine it with the PID-based quality control to give user adaptive video streaming with best watching experience. Second, since the next generation video coding standard High Efficiency Video Coding (HEVC) \cite{HEVC} adopts the similar coding framework as its predecessor H.264/AVC, we expect to apply this paper's model and approach to the emerging HEVC standard and its scalable extension.
+The PID-based quality control algorithm is only network-concerned thus should be easily integrated into other streaming systems, e.g., simulcast system like DASH. For the bitstream extraction, since the next generation video coding standard High Efficiency Video Coding (HEVC) \cite{HEVC} adopts the similar coding framework as its predecessor H.264/AVC, we expect to apply this paper's model and approach to the emerging HEVC standard and its scalable extension in our future work.
 
 
 % Can use something like this to put references on a page
@@ -750,6 +752,9 @@ https://www.youtube.com/
 \bibitem{SVCPerformance}
 M. Wien , H. Schwarz and T. Oelbaum,  ``Performance Analysis of SVC'',  in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp.1194-1203. Sep. 2007.
 
+\bibitem{JSVM}
+Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Team (JVT) of ISO-IEC MPEG \& ITU-T VCEG, N9195, Sep. 2007.
+
 \bibitem{DSS}
 http://dss.macosforge.org/
 
@@ -764,9 +769,6 @@ Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based me
 
 \bibitem{Amonou07}
 I.~Amonou, N.~Cammas, S.~Kervadec, S.~Pateux, ``Optimized Rate-distortion Extraction with Quality Layers in the Scalable Extension of H.264/AVC'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~17, no.~9, pp.~1186--1193, Sep. 2007.
-
-\bibitem{JSVM}
-Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Team (JVT) of ISO-IEC MPEG \& ITU-T VCEG, N9195, Sep. 2007.
 
 \bibitem{Sun09}
 J.~Sun, W.~Gao, D.~Zhao, W.~Li, ``On Rate-distortion Modeling and Extraction of H.264/SVC Fine-Granular Scalable Video'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~19, no.~3, pp.~323--336, Mar. 2009.
