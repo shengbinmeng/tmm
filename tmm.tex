@@ -147,7 +147,7 @@
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 % Do not put math or special symbols in the title.
-\title{Adaptive Video Streaming with PID-Based Quality Control and Optimized Bitstream Extraction}
+\title{Adaptive Video Streaming with Optimized Bitstream Extraction and PID-based Quality Control}
 
 % author names and IEEE memberships
 % note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-To cope with the challenge brought by bandwidth fluctuation and provide the user with video of both smooth and high quality, an adaptive video streaming framework is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment according to actual bandwidth condition. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm determines a suitable bitrate for transmission. Then, under the constraint of that bitrate, an efficient scheme is used to extract an optimal sub-stream from the whole SVC video bitstream. In this scheme, a linear error model which exploits the linear feature of pixel value errors is used to accurately estimate the distortion caused by discarding any combination of data packets, and a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction. Experimental results show that, comparing with the baseline software, the proposed framework integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The framework is deployed at online video website www.7dlive.com and proves to be practically effective.
+To cope with the challenge brought by bandwidth fluctuation and provide the user with video of both smooth and high quality, an adaptive video streaming framework which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and validated for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on the basis of that, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed framework integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The framework is deployed at online video website www.7dlive.com and proves to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -261,43 +261,29 @@ video streaming, quality control, bitstream extraction, distortion model, Scalab
 % 
 \IEEEPARstart{V}{ideo} streaming applications are becoming more and more popular on the Internet. Examples of the most common usage scenarios include VOD (Video On Demand), live broadcasting, video-based online education, etc. In these applications, video data is constantly delivered to different clients over various transmission channels, and the client media player can begin playing the video before the entire file has been transmitted. Among other features, video streaming makes it easy to watch video anywhere and anytime, and is an increasingly important way for people to consume video content.
 
-One of the biggest challenge for video streaming is the variety of users' network environment. A user may use different types of network (Ethernet, Wi-Fi, Cellular, etc.) and may also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth may change from time to time, influenced by the overall traffic. During such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the user to get best watching experience. To cope with this challenge, the video streaming system should be able to automatically adjust the video's bitrate or quality according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
+One of the biggest challenge for video streaming is the variety of users' network environment. A user might use different types of network (Ethernet, Wi-Fi, Cellular, etc.) and might also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth will change from time to time, influenced by the overall traffic. Within such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the user to get best watching experience. To cope with this challenge, the video streaming system should be able to automatically adjust the video's bitrate or quality according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
 
-There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, an extension of the H.264/AVC video coding standard \cite{SVCOverview}, which allows scalability of video bitrate and quality with only one single bitstream. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
+There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams each with different video quality are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, an extension of the H.264/AVC video coding standard \cite{SVCOverview}, which allows scalability of video bitrate and quality with only one single bitstream. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
 
-The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity that simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, we choose to adopt SVC in our adaptive video streaming system. While the work of this paper can be partly used in a simulcast system, it will mainly focus on the adaptive streaming system using SVC.
+The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity that simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, we choose to adopt SVC in our adaptive video streaming framework. While the work of this paper partly applies to the simulcast system, it will mainly focus on the context of SVC video streaming system.
 
-In the SVC video streaming system, one scalable video stream with enhancement data packets is produced according to actual requirement and stored at the server for streaming (how to configure and produce the stream is not in the scope of this paper; users are referred to \cite{JSVM}). During the streaming process, there are two key problems that need to be addressed well. The first is quality control, and the second is bitstream extraction. Quality control means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. Once the bandwidth has changed, the quality control algorithm should determine a bitrate suitable for the current bandwidth. Given this bitrate, how to extract data from the whole SVC stream to form an optimal sub-stream becomes the second problem, i.e., bitstream extraction problem. Optimized bitstream extraction aims to select a subset of NALUs (or packets) which represents video with best quality, or minimal distortion, under the constraint of the given bitrate. It should be noted that, bitstream extraction is not only useful in adaptive video streaming, but also in other SVC application scenarios where part of data needs to be obtained or kept, e.g., the archiving of surveillance video.
+In the SVC adaptive video streaming system, there are two key problems that need to be addressed well. First, as the prerequisite of the adaption to bandwidth change, the whole bitstream needs to be extracted so that sub-streams with various bitrates can be obtained. This is called the bitstream extraction problem. Optimal bitstream extraction algorithm aims to extract a sub-stream with best video quality, or minimal distortion, under the constraint of a given bitrate. Second, when the bandwidth does change, it's necessary to make decisions about whether and how to adjust the bitrate or video quality. This problem is called quality control, which means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. A good quality control algorithm should determine a suitable bitrate for current bandwidth condition, and keep the video quality both smooth and at a high level.
 
-In this paper, an efficient adaptive video streaming system based on SVC is proposed with the above two problems better solved. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the system. The original DSS project is modified by us and SVC support is added to it, for the purpose of both research and application. Then novel algorithms of quality control and bitstream extraction are designed and implemented to achieve significant improvement in terms of user-perceived video quality. The contributions of our work are threefold:
+In this paper, an efficient adaptive video streaming system based on SVC is proposed with the above two problems better solved. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the proposed system. The original DSS project is modified and SVC support is added to it, for the purpose of both research and application. Then novel algorithms for bitstream extraction and quality control are designed and implemented to achieve significant improvement in terms of user-perceived video quality. The contributions of our work can be summarized as follows:
 \begin{itemize}
-\item A quality control algorithm based on the Proportional-Integral-Derivative (PID) control concept is designed to replace the native one in DSS, and achieves higher average video quality with less quality fluctuation.
-\item A linear error model is proposed to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream, based on which a greedy-like bitstream extraction method is proposed and achieves PSNR gain of up to 0.5dB.
-\item The proposed novel solutions for quality control and bitstream extraction are combined together and result in a higher and smoother PSNR curve representing the final video quality perceived by the user.
+\item First, a simple and effective linear error model (LEM) is proposed and validated, which can be used to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream.
+\item Second, on the basis of the distortion estimation enabled by LEM, a greedy-like algorithm is designed to assign priority for each packet according to its R-D impact, thus enables optimized bitstream extraction.
+\item Finally, for the quality control problem, a novel algorithm based on the Proportional-Integral-Derivative (PID) control concept is proposed to replace the native one in DSS, and achieves much lower quality fluctuation with higher quality level.
 \end{itemize}
 
-The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:quality-control}, the proposed quality control algorithm is formulated and explained with term definitions and parameters selection. After that, we present the solution for the bitstream extraction problem in section \ref{sec:bit-extraction}, including the linear error model and the greed-like algorithm. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
+The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:bitstream-extraction}, the linear error model is proposed, and the solution for the bitstream extraction problem based on the model is present. After that, the PID-based quality control algorithm is proposed in section \ref{sec:quality-control}. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem Analysis and Related Works}
 \label{sec:analysis}
 
-The two most concerned problems in SVC adaptive streaming, i.e., quality control and bitstream extraction, are illustrated in Fig. \ref{fig:problems}. In this section, we analyze the two problems in detail, and introduce some existing related works on them.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width = 0.9\linewidth]{Problems.jpg}
-\caption{Two key problems in adaptive video streaming\label{fig:problems}}
-\end{figure}
-
-\subsection{Quality Control}
-
-For a quality control algorithm, there are three targets that should be achieved. First is to ensure the continuity of video playing. In real-time streaming system, each data packet has its own playtime, which is also regarded as the deadline of the transmission. If the packet does not arrive at client side before the deadline, the media player will be paused due to lack of data, and that should be avoided. The second is to keep a smooth video quality. Although network conditions may change rapidly, it is necessary for the streamed video to maintain a relatively stable quality level, since frequent change of video quality will lead to poor user experience. The third target is to make the video quality as good as possible. In other words, the available bandwidth should be fully utilized. Suppose we keep sending video data in a low bitrate (with low video quality as well), neither the playback pause nor any quality fluctuation will likely happen. However, a low video quality is certainly not what we want.
-
-The state-of-art solutions to avoid video pause in client media player mainly focus on how to select and schedule the video packets. In \cite{Gao06}, K. Gao et al. proposed a priority based scheduling strategy which guarantees packets of higher importance will be transmitted earlier. Among the packets with the same priority, those having the earliest deadline will be transmitted first. A similar solution is proposed in \cite{Schierl10}, where video data is pre-buffered in several buffers of different priorities. Whenever re-buffering occurs, quality will be degraded to a lower level to meet the time and rate constraint. Although the priority based scheduling strategies perform well in maintaining a non-paused video playing, they do not take quality fluctuation into account. As a result, users may still suffer from the frequent fluctuation of video quality.
-
-In DSS, quality control is implemented by monitoring packet delay (the difference between current time and the playing time of this packet). When a new packet is ready to be sent to streaming buffer, DSS checks the delay of it and compares this delay with some pre-set critical time thresholds to judge whether and how violently the quality change should be made. This algorithm can reduce quality fluctuation to some degree. However, it only provides conservative quality change, which makes its reaction so slow that sometimes media player may have already stopped due to lack of video data before quality drops. Furthermore, this algorithm has no knowledge of the bandwidth change so it cannot accurately adjust the video quality. Therefore, quality oscillation is inevitable in this algorithm.
+In this section, we analyze the two most concerned problems in SVC adaptive video streaming, i.e., bitstream extraction and quality control, and introduce some existing related works on them.
 
 \subsection{Bitstream Extraction}
 
@@ -309,122 +295,22 @@ In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework base
 
 In our previous work \cite{Zhang12}, we noticed the mismatch between quadratic calculations in distortion criteria like MSE or PSNR and the essential linear operations in the coding process, and proposed a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated. The linear error model exploits the linear feature of pixel value errors and achieves good performance in distortion estimation and bitstream extraction with reference. However, this work assumes that the original video sequence is available for reference, which is not always true. Adaptation to handle the special characteristic of the no-reference case is lacking in the previous work and included in this paper.
 
-The following of this paper will present solutions for the above problems in detail. We have published the related ideas in conference papers \cite{Meng14}\cite{Meng14-PID}, and in this paper we combine our previous works together and lay a solid foundation for a practical adaptive video streaming system.
+\subsection{Quality Control}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{PID-based Quality Control Algorithm}
-\label{sec:quality-control}
+For a quality control algorithm, there are three targets that should be achieved. First is to ensure the continuity of video playing. In real-time streaming system, each data packet has its own playtime, which is also regarded as the deadline of the transmission. If the packet does not arrive at client side before the deadline, the media player will be paused due to lack of data, and that should be avoided. The second is to keep a smooth video quality. Although network conditions may change rapidly, it is necessary for the streamed video to maintain a relatively stable quality level, since frequent change of video quality will lead to poor user experience. The third target is to make the video quality as good as possible. In other words, the available bandwidth should be fully utilized. Suppose we keep sending video data in a low bitrate (with low video quality as well), neither the playback pause nor any quality fluctuation will likely happen. However, a low video quality is certainly not what we want.
 
-PID control \cite{PID}\cite{Astrom02} is a control loop feedback mechanism commonly used in industrial control systems. \textit{Process variable} and \textit{setpoint} are two core concepts in PID control. The process variable stands for the current status of the system. The setpoint is the target for this automatic control system to reach. The goal of PID control is to minimize the error between process variable and setpoint by adjusting system inputs. The controller output $u(t)$ is defined as follows:
+The state-of-art solutions to avoid video pause in client media player mainly focus on how to select and schedule the video packets. In \cite{Gao06}, K. Gao et al. proposed a priority based scheduling strategy which guarantees packets of higher importance will be transmitted earlier. Among the packets with the same priority, those having the earliest deadline will be transmitted first. A similar solution is proposed in \cite{Schierl10}, where video data is pre-buffered in several buffers of different priorities. Whenever re-buffering occurs, quality will be degraded to a lower level to meet the time and rate constraint. Although the priority based scheduling strategies perform well in maintaining a non-paused video playing, they do not take quality fluctuation into account. As a result, users may still suffer from the frequent fluctuation of video quality.
 
-\begin{equation}
-\label{eq:pid-output}
-u(t) = {K_p}e(t) + {K_i}\int_0^t {e(\tau )d\tau }  + {K_d}\frac{d}{{dt}}e(t) \: ,
-\end{equation}
-where $e(t)$ represents the error between process variable and setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters representing the proportional gain, integral gain and derivative gain respectively. Proportional part directly relates to the change of the process variable, and is also the main factor to adjust the process variable towards setpoint. There might be oscillations and steady-state errors in a pure proportional system, and they can be reduced or eliminated by adding the integral part. The appearance of derivative part is to predict future errors, so that the system tends to become steady early and quickly. The result of (\ref{eq:pid-output}) is used to manipulate the system input of next moment to adjust process variable towards setpoint.
+In DSS, quality control is implemented by monitoring packet delay (the difference between current time and the playing time of this packet). When a new packet is ready to be sent to streaming buffer, DSS checks the delay of it and compares this delay with some pre-set critical time thresholds to judge whether and how violently the quality change should be made. This algorithm can reduce quality fluctuation to some degree. However, it only provides conservative quality change, which makes its reaction so slow that sometimes media player may have already stopped due to lack of video data before quality drops. Furthermore, this algorithm has no knowledge of the bandwidth change so it cannot accurately adjust the video quality. Therefore, quality oscillation is inevitable in this algorithm.
 
-As an effective and flexible control technique, PID control has been used to solve all kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms by many papers. For instance, in \cite{Wong04} a PID-based real time rate control scheme is proposed to trade-off between spatial and temporal quality and smooth the video quality between frames; in \cite{Yang10}, the authors designed an incremental rate control algorithm for H.264/SVC, in which the PID method is used to provide robust buffer control for each layer. We also notice that some researchers have proposed theoretical model or middle-ware framework for QoS adaptation \cite{Li98}\cite{Li99}, with PID as the basic control concept. However, we have not found any paper that integrates PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. That inspires us to design a PID-based quality control algorithm and utilize it to deliver best video quality with least quality fluctuation.
-
-In this section, we first introduce the \textit{quality level} concept to discretization the bitrate and quality of scalable video. Then we define the process variable used in our PID-based quality control algorithm. After that, the algorithm is formulated and explained in detail, followed by the brief discussion of parameter selection.
-
-\subsection{Quality Level}
-\label{subsec:quality-level}
-
-The video quality is a continuous value. In practical operation, it is not possible to control it at an arbitrary precision. So we propose a \textit{quality level} concept as the discrete description of the video quality. When the video quality needs to be adjusted, we simply increase or decrease the quality level. Each quality level corresponds to a certain bitrate. A higher quality level corresponds to a higher bitrate and vice versa. The number of quality levels and how they are mapped to sub-streams with different bitrates depends on actual requirement or implementation. The more quality levels are defined, the more precisely the control algorithm can adjust bitrate to follow the bandwidth change. As pointed out in section \ref{sec:intro}, simulcast streaming systems can only have limited quality levels while SVC streaming systems can define quality levels at a much finer granularity.
-
-\subsection{Process Variable Selection}
-\label{subsec:variable}
-
-In our PID-based quality control algorithm, the process variable is called \textit{actual\_check interval ratio}, which is defined as follows.
-
-In DSS, two timelines are important. Push timeline indicates the time of pushing video data packets to streaming buffer, and play timeline indicates the time these data packet should be played, i.e., the presentation time stamp (often seen as PTS) of each packet. Their relationship is shown in Fig. \ref{fig:intervals}. The program will check the timelines periodically, and, in the default quality control algorithm of DSS, use the packet delays to decide whether quality change is needed. The two intervals shown in Fig. \ref{fig:intervals}, i.e., check interval and actual interval, are worth notice and may provide useful information. In the ideal situation, during each check interval, the server pushes an amount of data that will actually play for a period of time equal to that check interval, i.e., \textit{actual\_interval} = \textit{check\_interval}. If \textit{actual\_interval} is smaller than \textit{check\_interval}, it means that less data is pushed to the client, and the pushing is slowed down because bandwidth is relatively low at this time. On the other hand, if \textit{actual\_interval} is larger than \textit{check\_interval}, it indicates the bandwidth condition is good and data is being pushed quickly to the client. The ratio of these two intervals, i.e., \textit{actual\_check interval ratio}, is in direct proportion to the ratio of the data rate appropriate for bandwidth and the current pushing data rate.
-
-The \textit{actual\_check interval ratio} is suitable for quality control because: 1) this ratio directly reflects the mismatch of current pushing data rate and the bandwidth, and by adjusting data rate according to it, this ratio can be used to accurately change video quality; 2) the desired value of this ratio is 1.0 by definition so we don't need to find the optimized setpoint by mathematical methods or experiments; and 3) it is easy to compute and implement in practical systems.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width = 0.9\linewidth]{Intervals.jpg}
-\caption{Two timelines in Darwin Streaming Sever (DSS) \label{fig:intervals}}
-\end{figure}
-
-\subsection{Model Formulation}
-\label{subsec:model}
-
-As is introduced above, the \textit{actual\_check interval ratio} serves as the process variable in this PID-based quality control algorithm. In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that the chosen process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in original PID equations have been changed to division operations to keep the correctness, as follows:
-
-\begin{equation}
-\label{eq:ut}
-{u_t} = {K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t ,
-\end{equation}
-
-\begin{equation}
-\label{eq:ep}
-E_p^t = \frac{{actual\_interva{l_t}}}{{check\_interva{l_t}}} ,
-\end{equation}
-
-\begin{equation}
-\label{eq:ei}
-E_i^t = \frac{{long\_actual\_interva{l_t}}}{{long\_check\_interva{l_t}}} ,
-\end{equation}
-
-\begin{equation}
-\label{eq:ed}
-E_d^t = E_p^t/E_p^{t - 1} ,
-\end{equation}
-
-\begin{equation}
-\label{eq:long-actual}
-long\_actual\_interva{l_t} = \sum\limits_{\tau = {T_l}}^t {actual\_interva{l_\tau}} ,
-\end{equation}
-
-\begin{equation}
-\label{eq:long-check}
-long\_check\_interva{l_t} = \sum\limits_{\tau = {T_l}}^t {check\_interva{l_\tau}} .
-\end{equation}
-
-
-In (\ref{eq:ut}), $K_p$, $K_i$, and $K_d$ indicate the tuning parameters for proportional, integral and derivative parts respectively, and $E_p^t$, $E_i^t$, $E_d^t$ stand for the corresponding observed value for each part, which are defined in (\ref{eq:ep}) - (\ref{eq:long-check}); the controller output $u_t$ is utilized to calculate an appropriate data rate and further to determine which quality level we should transmit (see Algorithm \ref{algo:control} for more details).
-
-In (\ref{eq:long-actual}) and (\ref{eq:long-check}), $T_l$ stands for the last quality change time. Theoretically, the integral part should be recorded and calculated from the system start. In practice, however, bandwidth may vary significantly during the transmission. If the integral part was recorded for too long time, it may not reflect the real network status and may slow down the reaction for better quality level. A compromise here is to choose a relatively long time, i.e., the time from last quality change till now, for the integral part calculation.
-
-This ratio-based model is more simple and effective for the chosen process variable and setpoint. And note that, since the controller output ($u_t$) is also a ratio, it should be used as a multiplier to manipulate the system input, i.e., the pushing data rate.
-
-The whole process of this algorithm is described in Algorithm \ref{algo:control}. Compared to other scheduling strategies, this quality control algorithm has several advantages. First, this algorithm does not just rely on current packet delay or information at fixed time point, so quality change may occur at any proper time. Second, since the model has taken prediction into account, we can actually decide whether the bandwidth will be high or low enough for the quality level to change, thus avoiding video quality fluctuation. Third, in this algorithm it's not necessary to change one quality level at a time. This enables fast quality drop when bandwidth suddenly decreases and fast quality rise when system starts, resulting in a seamless experience.
-
-\begin{algorithm}
-\caption{PID-based quality control algorithm}
-\label{algo:control}
-\begin{algorithmic}
-    \STATE before packet sent
-    \STATE check\_interval = curr\_time -- last\_check\_time
-    \STATE actual\_interval = curr\_media\_time -- last\_check\_media\_time
-    \STATE long\_check\_interval += check\_interval
-    \STATE long\_actual\_interval += actual\_interval
-    \STATE calculate $E_p^t$, $E_i^t$, $E_d^t$ according to Eq. (\ref{eq:ep}) - (\ref{eq:ed})
-    \STATE output = ${K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t$
-    \STATE new\_bitrate = output * curr\_bitrate
-    \STATE new\_level = get\_level(new\_bitrate, bitrate\_of\_level[])
-    \IF {quality level changed}
-    	\STATE long\_check\_interval = 0
-    	\STATE long\_actual\_interval = 0
-    	\STATE curr\_bitrate = bitrate\_of\_level[new\_level]
-    \ENDIF
-    \STATE send packet according to new quality level
-  \end{algorithmic}
-\end{algorithm}
-
-
-\subsection{Parameter Selection}
-\label{subsec:parameter}
-
-Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content. Therefore once the parameters are tuned they should apply well to different video streams.
+The following of this paper will present our solutions for the above problems in detail. And we will combine our works together and lay a solid foundation for a practical adaptive video streaming system.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Optimized Bitstream Extraction Based on Linear Error Model}
-\label{sec:bit-extraction}
+\label{sec:bitstream-extraction}
 
-After the quality control algorithm determines an appropriate bitrate and sets a quality level accordingly, the system will only send packets belonging to this new quality level (as described at the end of Algorithm \ref{algo:control}). For SVC videos, it means to extract a subset of packets from the whole bitstream. How to optimally choose this subset to achieve minimum distortion under the given bitrate is the key point of bitstream extraction problem. In this section, we propose a linear error mode and a greedy-like algorithm to solve this problem.
+Being able to adjust bitrate is the prerequisite for an adaptive video streaming system. For SVC videos, it means to extract a subset of packets from the whole bitstream. How to optimally choose this subset to achieve minimum distortion under the given bitrate is the key point of bitstream extraction problem. In this section, we propose a linear error mode and a greedy-like algorithm to solve this problem.
 
 \subsection{Linear Error Model for Quality Scalable Video}
 \label{sec:model}
@@ -551,14 +437,180 @@ In some scenarios, the priority assignment and bitstream extraction needs to be 
 
 In the no-reference case, since we do not have access to the original sequence, we can not get the error between the video sequence decoded from full enhancement packets and the original sequence, which is $e_{full}$ used above. A straightforward idea is to set $e_{full}$ to zero, meaning we calculate distortion with respect to the fully reconstructed signal, rather than to the original sequence. However, simply doing so causes the algorithm to perform badly in experiments. We find that, since discarding some enhancement packets will not bring much significant error relative to the fully reconstructed signal, the calculated PSNR values are too large to well represent the real distortion. To address this issue, instead of calculating PSNR, we directly use MSE of all pixels as the distortion criteria in the priority assignment algorithm. This proves to be a simple and effective solution, and the extraction performance turns out to be much better.
 
-We have presented experimental results for the case where reference original sequence is available in our previous work \cite{Zhang12}, so this paper will include only experimental results for the no-reference case in the following section.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PID-based Quality Control Algorithm}
+\label{sec:quality-control}
+
+PID control \cite{PID}\cite{Astrom02} is a control loop feedback mechanism commonly used in industrial control systems. \textit{Process variable} and \textit{setpoint} are two core concepts in PID control. The process variable stands for the current status of the system. The setpoint is the target for this automatic control system to reach. The goal of PID control is to minimize the error between process variable and setpoint by adjusting system inputs. The controller output $u(t)$ is defined as follows:
+
+\begin{equation}
+\label{eq:pid-output}
+u(t) = {K_p}e(t) + {K_i}\int_0^t {e(\tau )d\tau }  + {K_d}\frac{d}{{dt}}e(t) \: ,
+\end{equation}
+where $e(t)$ represents the error between process variable and setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters representing the proportional gain, integral gain and derivative gain respectively. Proportional part directly relates to the change of the process variable, and is also the main factor to adjust the process variable towards setpoint. There might be oscillations and steady-state errors in a pure proportional system, and they can be reduced or eliminated by adding the integral part. The appearance of derivative part is to predict future errors, so that the system tends to become steady early and quickly. The result of (\ref{eq:pid-output}) is used to manipulate the system input of next moment to adjust process variable towards setpoint.
+
+As an effective and flexible control technique, PID control has been used to solve all kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms by many papers. For instance, in \cite{Wong04} a PID-based real time rate control scheme is proposed to trade-off between spatial and temporal quality and smooth the video quality between frames; in \cite{Yang10}, the authors designed an incremental rate control algorithm for H.264/SVC, in which the PID method is used to provide robust buffer control for each layer. We also notice that some researchers have proposed theoretical model or middle-ware framework for QoS adaptation \cite{Li98}\cite{Li99}, with PID as the basic control concept. However, we have not found any paper that integrates PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. That inspires us to design a PID-based quality control algorithm and utilize it to deliver best video quality with least quality fluctuation.
+
+In this section, we first introduce the \textit{quality level} concept to discretization the bitrate and quality of scalable video. Then we define the process variable used in our PID-based quality control algorithm. After that, the algorithm is formulated and explained in detail, followed by the brief discussion of parameter selection.
+
+\subsection{Quality Level}
+\label{subsec:quality-level}
+
+The video quality is a continuous value. In practical operation, it is not possible to control it at an arbitrary precision. So we propose a \textit{quality level} concept as the discrete description of the video quality. When the video quality needs to be adjusted, we simply increase or decrease the quality level. Each quality level corresponds to a certain bitrate. A higher quality level corresponds to a higher bitrate and vice versa. The number of quality levels and how they are mapped to sub-streams with different bitrates depends on actual requirement or implementation. The more quality levels are defined, the more precisely the control algorithm can adjust bitrate to follow the bandwidth change. As pointed out in section \ref{sec:intro}, simulcast streaming systems can only have limited quality levels while SVC streaming systems can define quality levels at a much finer granularity.
+
+\subsection{Process Variable Selection}
+\label{subsec:variable}
+
+In our PID-based quality control algorithm, the process variable is called \textit{actual\_check interval ratio}, which is defined as follows.
+
+In DSS, two timelines are important. Push timeline indicates the time of pushing video data packets to streaming buffer, and play timeline indicates the time these data packet should be played, i.e., the presentation time stamp (often seen as PTS) of each packet. Their relationship is shown in Fig. \ref{fig:intervals}. The program will check the timelines periodically, and, in the default quality control algorithm of DSS, use the packet delays to decide whether quality change is needed. The two intervals shown in Fig. \ref{fig:intervals}, i.e., check interval and actual interval, are worth notice and may provide useful information. In the ideal situation, during each check interval, the server pushes an amount of data that will actually play for a period of time equal to that check interval, i.e., \textit{actual\_interval} = \textit{check\_interval}. If \textit{actual\_interval} is smaller than \textit{check\_interval}, it means that less data is pushed to the client, and the pushing is slowed down because bandwidth is relatively low at this time. On the other hand, if \textit{actual\_interval} is larger than \textit{check\_interval}, it indicates the bandwidth condition is good and data is being pushed quickly to the client. The ratio of these two intervals, i.e., \textit{actual\_check interval ratio}, is in direct proportion to the ratio of the data rate appropriate for bandwidth and the current pushing data rate.
+
+The \textit{actual\_check interval ratio} is suitable for quality control because: 1) this ratio directly reflects the mismatch of current pushing data rate and the bandwidth, and by adjusting data rate according to it, this ratio can be used to accurately change video quality; 2) the desired value of this ratio is 1.0 by definition so we don't need to find the optimized setpoint by mathematical methods or experiments; and 3) it is easy to compute and implement in practical systems.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width = 0.9\linewidth]{Intervals.jpg}
+\caption{Two timelines in Darwin Streaming Sever (DSS) \label{fig:intervals}}
+\end{figure}
+
+\subsection{Model Formulation}
+\label{subsec:model}
+
+As is introduced above, the \textit{actual\_check interval ratio} serves as the process variable in this PID-based quality control algorithm. In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that the chosen process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in original PID equations have been changed to division operations to keep the correctness, as follows:
+
+\begin{equation}
+\label{eq:ut}
+{u_t} = {K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t ,
+\end{equation}
+
+\begin{equation}
+\label{eq:ep}
+E_p^t = \frac{{actual\_interva{l_t}}}{{check\_interva{l_t}}} ,
+\end{equation}
+
+\begin{equation}
+\label{eq:ei}
+E_i^t = \frac{{long\_actual\_interva{l_t}}}{{long\_check\_interva{l_t}}} ,
+\end{equation}
+
+\begin{equation}
+\label{eq:ed}
+E_d^t = E_p^t/E_p^{t - 1} ,
+\end{equation}
+
+\begin{equation}
+\label{eq:long-actual}
+long\_actual\_interva{l_t} = \sum\limits_{\tau = {T_l}}^t {actual\_interva{l_\tau}} ,
+\end{equation}
+
+\begin{equation}
+\label{eq:long-check}
+long\_check\_interva{l_t} = \sum\limits_{\tau = {T_l}}^t {check\_interva{l_\tau}} .
+\end{equation}
+
+
+In (\ref{eq:ut}), $K_p$, $K_i$, and $K_d$ indicate the tuning parameters for proportional, integral and derivative parts respectively, and $E_p^t$, $E_i^t$, $E_d^t$ stand for the corresponding observed value for each part, which are defined in (\ref{eq:ep}) - (\ref{eq:long-check}); the controller output $u_t$ is utilized to calculate an appropriate data rate and further to determine which quality level we should transmit (see Algorithm \ref{algo:control} for more details).
+
+In (\ref{eq:long-actual}) and (\ref{eq:long-check}), $T_l$ stands for the last quality change time. Theoretically, the integral part should be recorded and calculated from the system start. In practice, however, bandwidth may vary significantly during the transmission. If the integral part was recorded for too long time, it may not reflect the real network status and may slow down the reaction for better quality level. A compromise here is to choose a relatively long time, i.e., the time from last quality change till now, for the integral part calculation.
+
+This ratio-based model is more simple and effective for the chosen process variable and setpoint. And note that, since the controller output ($u_t$) is also a ratio, it should be used as a multiplier to manipulate the system input, i.e., the pushing data rate.
+
+The whole process of this algorithm is described in Algorithm \ref{algo:control}. Compared to other scheduling strategies, this quality control algorithm has several advantages. First, this algorithm does not just rely on current packet delay or information at fixed time point, so quality change may occur at any proper time. Second, since the model has taken prediction into account, we can actually decide whether the bandwidth will be high or low enough for the quality level to change, thus avoiding video quality fluctuation. Third, in this algorithm it's not necessary to change one quality level at a time. This enables fast quality drop when bandwidth suddenly decreases and fast quality rise when system starts, resulting in a seamless experience.
+
+\begin{algorithm}
+\caption{PID-based quality control algorithm}
+\label{algo:control}
+\begin{algorithmic}
+    \STATE before packet sent
+    \STATE check\_interval = curr\_time -- last\_check\_time
+    \STATE actual\_interval = curr\_media\_time -- last\_check\_media\_time
+    \STATE long\_check\_interval += check\_interval
+    \STATE long\_actual\_interval += actual\_interval
+    \STATE calculate $E_p^t$, $E_i^t$, $E_d^t$ according to Eq. (\ref{eq:ep}) - (\ref{eq:ed})
+    \STATE output = ${K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t$
+    \STATE new\_bitrate = output * curr\_bitrate
+    \STATE new\_level = get\_level(new\_bitrate, bitrate\_of\_level[])
+    \IF {quality level changed}
+    	\STATE long\_check\_interval = 0
+    	\STATE long\_actual\_interval = 0
+    	\STATE curr\_bitrate = bitrate\_of\_level[new\_level]
+    \ENDIF
+    \STATE send packet according to new quality level
+  \end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Parameter Selection}
+\label{subsec:parameter}
+
+Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content. Therefore once the parameters are tuned they should apply well to different video streams.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Results}
 \label{sec:experiment}
 
-To implement our proposed adaptive streaming system requires the combination of the PID-based quality control algorithm and the optimized bitstream extraction method. The former determines the current bitrate to follow the bandwidth change, and the latter will ensure the sub-stream with the best possible quality is obtained and sent under that bitrate constraint. They work together to construct a system that delivers best quality of experience for the users. Choosing DSS as the implementation basis, we have integrated the proposed algorithms into it for the purpose of both research and application. In this section, we first present separate experiments to demonstrate the advantage of each proposed solution, and then give the result when they are combined together. Readers who are interested in the practical implementation can also visit the online video website http://www.7dlive.com for more information.
+To implement our proposed adaptive streaming system requires the combination of the optimized bitstream extraction method and the PID-based quality control algorithm. The latter determines the current bitrate to follow the bandwidth change, and the former will ensure the sub-stream with the best possible quality is obtained and sent under that bitrate constraint. They work together to construct a system that delivers best quality of experience for the users. Choosing DSS as the implementation basis, we have integrated the proposed algorithms into it for the purpose of both research and application. In this section, we first present separate experiments to demonstrate the advantage of each proposed solution, and then give the result when they are combined together. Readers who are interested in the practical implementation can also visit the online video website http://www.7dlive.com for more information.
+
+\subsection{Experiments for Bitstream Extraction}
+
+We compare the performance of the proposed bitstream extraction method with that of JSVM 9.16.
+
+In our experiments, all test bitstreams are encoded with the JSVM encoder, where the standard hierarchical B coding structure and CABAC entropy coding are used. Each bitstream contains one base layer and a quality enhancement layer, with quantization parameters QP = 33 and QP = 27, respectively. The enhancement layer is further divided into 2 MGS layers by configuring the MGS vector to separate the transform coefficients into two groups (containing 4 and 12 coefficients respectively). For each test bitstream, ten bitrate points (one with all enhancement packets, one with only the base layer packets, and 8 points between) are chosen for extraction. For each bitrate point, the extraction is conducted using the bitstream extractors in JSVM, with and without quality layer (denoted as JSVM QL and JSVM Basic, respectively), and the proposed method. The size of the optimization window in the proposed method is set to 4 GOPs, with a GOP size of 8. All of the eight SVC standard sequences with CIF resolution are considered at 30FPS and tested in our experiments.
+
+The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:results}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
+
+Among other bitstream extraction methods besides that of JSVM, the work in \cite{Maani09} achieves much better performance than JSVM QL, and even better than ours. However, the method of \cite{Maani09} needs more computation in order to train robust model parameters for different sequences, while the complexity of our method is always the same with JSVM QL.
+
+\begin{figure*}[t]
+\centering
+\subfloat[City]{
+\includegraphics[width=0.5\textwidth]{City.jpg}
+\label{fig:City}}
+\subfloat[Foreman]{
+\includegraphics[width=0.5\textwidth]{Foreman.jpg}
+\label{fig:Foreman}}
+\qquad
+\subfloat[Harbour]{
+\includegraphics[width=0.5\textwidth]{Harbour.jpg}
+\label{fig:Harbour}}
+\subfloat[Soccer]{
+\includegraphics[width=0.5\textwidth]{Soccer.jpg}
+\label{fig:Soccer}}
+\caption{Performance of three bitstream extraction methods for various CIF sequences}
+\label{fig:performance}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{Algorithm Performance: Luma PSNR Gain Compared with JSVM}
+\label{tab:results}
+\begin{minipage}{0.95\linewidth}
+% \renewcommand{\thefootnote}{\thempfootnote}
+\centering
+\begin{tabular}{c|c|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}| 
+p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}}
+
+%% |l|l| to left justify each column entry
+%% |c|c| to center each column entry
+%% use of \rule[]{}{} below opens up each row 
+
+\hline \hline
+\multicolumn{2}{c|}{Sequence} &
+{\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
+
+\multirow{2}{*}{JSVM QL\footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL} (dB)}
+& Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints} & 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
+& Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints} & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
+
+\multirow{2}{*}{JSVM no QL (dB)}
+& Max & 0.50 & 0.83 & 0.32 & 0.29 & 0.50 & 0.34 & 0.61 & 0.53 \\ \cline{2-10}
+& Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \hline
+
+\end{tabular}
+\end{minipage}
+\end{table*}
 
 \subsection{Experiments for Quality Control}
 \label{subsec:exp-control}
@@ -627,65 +679,6 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 \includegraphics[width = 0.9\linewidth]{Fluctuation.jpg}
 \caption{Video quality fluctuation with time \label{fig:fluctuation}}
 \end{figure}
-
-\subsection{Experiments for Bitstream Extraction}
-
-We compare the performance of the proposed bitstream extraction method with that of JSVM 9.16.
-
-In our experiments, all test bitstreams are encoded with the JSVM encoder, where the standard hierarchical B coding structure and CABAC entropy coding are used. Each bitstream contains one base layer and a quality enhancement layer, with quantization parameters QP = 33 and QP = 27, respectively. The enhancement layer is further divided into 2 MGS layers by configuring the MGS vector to separate the transform coefficients into two groups (containing 4 and 12 coefficients respectively). For each test bitstream, ten bitrate points (one with all enhancement packets, one with only the base layer packets, and 8 points between) are chosen for extraction. For each bitrate point, the extraction is conducted using the bitstream extractors in JSVM, with and without quality layer (denoted as JSVM QL and JSVM Basic, respectively), and the proposed method. The size of the optimization window in the proposed method is set to 4 GOPs, with a GOP size of 8. All of the eight SVC standard sequences with CIF resolution are considered at 30FPS and tested in our experiments.
-
-The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:results}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
-
-Among other bitstream extraction methods besides that of JSVM, the work in \cite{Maani09} achieves much better performance than JSVM QL, and even better than ours. However, the method of \cite{Maani09} needs more computation in order to train robust model parameters for different sequences, while the complexity of our method is always the same with JSVM QL.
-
-\begin{figure*}[t]
-\centering
-\subfloat[City]{
-\includegraphics[width=0.5\textwidth]{City.jpg}
-\label{fig:City}}
-\subfloat[Foreman]{
-\includegraphics[width=0.5\textwidth]{Foreman.jpg}
-\label{fig:Foreman}}
-\qquad
-\subfloat[Harbour]{
-\includegraphics[width=0.5\textwidth]{Harbour.jpg}
-\label{fig:Harbour}}
-\subfloat[Soccer]{
-\includegraphics[width=0.5\textwidth]{Soccer.jpg}
-\label{fig:Soccer}}
-\caption{Performance of three bitstream extraction methods for various CIF sequences}
-\label{fig:performance}
-\end{figure*}
-
-\begin{table*}[t]
-\centering
-\caption{Algorithm Performance: Luma PSNR Gain Compared with JSVM}
-\label{tab:results}
-\begin{minipage}{0.95\linewidth}
-% \renewcommand{\thefootnote}{\thempfootnote}
-\centering
-\begin{tabular}{c|c|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}| 
-p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}}
-
-%% |l|l| to left justify each column entry
-%% |c|c| to center each column entry
-%% use of \rule[]{}{} below opens up each row 
-
-\hline \hline
-\multicolumn{2}{c|}{Sequence} &
-{\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
-
-\multirow{2}{*}{JSVM QL\footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL} (dB)}
-& Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints} & 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
-& Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints} & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
-
-\multirow{2}{*}{JSVM no QL (dB)}
-& Max & 0.50 & 0.83 & 0.32 & 0.29 & 0.50 & 0.34 & 0.61 & 0.53 \\ \cline{2-10}
-& Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \hline
-
-\end{tabular}
-\end{minipage}
-\end{table*}
 
 \subsection{Result of the Combined System}
 
