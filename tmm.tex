@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-To cope with the challenge brought by bandwidth fluctuation and provide the user with video of both smooth and high quality, an adaptive video streaming framework which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and validated for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on the basis of that, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed framework integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The framework is deployed at online video website www.7dlive.com and proves to be practically effective.
+To cope with the challenge brought by bandwidth fluctuation and provide the user with video of both smooth and high quality, an adaptive video streaming framework which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and verified for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on the basis of that, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed framework integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The framework is deployed at online video website www.7dlive.com and proves to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -271,10 +271,12 @@ In the SVC adaptive video streaming system, there are two key problems that need
 
 In this paper, an efficient adaptive video streaming system based on SVC is proposed with the above two problems better solved. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the proposed system. The original DSS project is modified and SVC support is added to it, for the purpose of both research and application. Then novel algorithms for bitstream extraction and quality control are designed and implemented to achieve significant improvement in terms of user-perceived video quality. The contributions of our work can be summarized as follows:
 \begin{itemize}
-\item First, a simple and effective linear error model (LEM) is proposed and validated, which can be used to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream.
+\item First, a simple and effective linear error model (LEM) is proposed and verified, which can be used to accurately estimate the distortion caused by discarding any combination of packets from a SVC bitstream.
 \item Second, on the basis of the distortion estimation enabled by LEM, a greedy-like algorithm is designed to assign priority for each packet according to its R-D impact, thus enables optimized bitstream extraction.
 \item Finally, for the quality control problem, a novel algorithm based on the Proportional-Integral-Derivative (PID) control concept is proposed to replace the native one in DSS, and achieves much lower quality fluctuation with higher quality level.
 \end{itemize}
+
+The proposed solutions for bitstream extraction and quality control are combined together and result in a higher and smoother PSNR curve representing the final video quality perceived by the user.
 
 The rest of this paper is organized as follows. In section \ref{sec:analysis}, we analyze the problems in detail and introduce some related works on them. Then in section \ref{sec:bitstream-extraction}, the linear error model is proposed, and the solution for the bitstream extraction problem based on the model is present. After that, the PID-based quality control algorithm is proposed in section \ref{sec:quality-control}. Section \ref{sec:experiment} lists the experimental results and compares our proposed solution with others. Finally, in section \ref{sec:conclusion}, we conclude this paper's work and point out its promising applications and extensions in the future.
 
@@ -693,9 +695,9 @@ After combining the two algorithms together, the proposed adaptive streaming sys
 \section{Conclusion}
 \label{sec:conclusion}
 
-In this paper, we propose an adaptive video streaming system with PID-based quality control algorithm and optimized bitstream extraction. The PID-based quality control algorithm has a flexible mechanism to determine the suitable quality level so that it gives an accurate and swift response to the bandwidth change. Comparing with the original algorithm in DSS, this algorithm has reduced quality fluctuation significantly to improve audience satisfaction. The bitstream extraction method includes a linear error model to estimate the distortion caused by discarding any combination of packets and a greedy algorithm to assign priority to each data packet. The packets' priority values can then be stored in the bitstream and used for R-D optimized extraction. Experimental results show that the proposed method can achieve PSNR gain of up to 0.5dB compared to the JSVM QL extractor under the same bitrate constraint, also with the same computational complexity. The SVC streaming system integrated with these two solutions performs well in automatically adapting to the user's bandwidth fluctuation, and is able to give the user a better watching experience.
+In this paper, we propose an adaptive video streaming system with optimized bitstream extraction and PID-based quality control. The bitstream extraction method includes a linear error model to estimate the distortion caused by discarding any combination of packets and a greedy algorithm to assign priority to each data packet. The packets' priority values can then be stored in the bitstream and used for R-D optimized extraction. Experimental results show that the proposed method can achieve PSNR gain of up to 0.5dB compared to the JSVM QL extractor under the same bitrate constraint, also with the same computational complexity. The PID-based quality control algorithm has a flexible mechanism to determine the suitable quality level so that it gives an accurate and swift response to the bandwidth change. Comparing with the original algorithm in DSS, this algorithm has reduced quality fluctuation significantly to improve audience satisfaction. The SVC streaming system integrated with these two solutions performs well in automatically adapting to the user's bandwidth fluctuation, and is able to give the user a better watching experience.
 
-The PID-based quality control algorithm is only network-concerned thus should be easily integrated into other streaming systems, e.g., simulcast system like DASH. For the bitstream extraction, since the next generation video coding standard High Efficiency Video Coding (HEVC) \cite{HEVC} adopts the similar coding framework as its predecessor H.264/AVC, we expect to apply this paper's model and approach to the emerging HEVC standard and its scalable extension in our future work.
+Since the next generation video coding standard High Efficiency Video Coding (HEVC) \cite{HEVC} adopts the similar coding framework as its predecessor H.264/AVC, we expect to apply this paper's model and approach for bitstream extraction to the emerging HEVC standard and its scalable extension in our future work. As for the PID-based quality control algorithm, it is only network-concerned thus should be easily integrated into other streaming systems, e.g., simulcast system like DASH.
 
 
 % Can use something like this to put references on a page
@@ -745,23 +747,17 @@ https://www.youtube.com/
 \bibitem{SVCPerformance}
 M. Wien , H. Schwarz and T. Oelbaum,  ``Performance Analysis of SVC'',  in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp.1194-1203. Sep. 2007.
 
-\bibitem{JSVM}
-Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Team (JVT) of ISO-IEC MPEG \& ITU-T VCEG, N9195, Sep. 2007.
-
 \bibitem{DSS}
 http://dss.macosforge.org/
-
-\bibitem{Gao06}
-K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', in {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
 
 \bibitem{Knapsack}
 http://en.wikipedia.org/wiki/Knapsack\_problem
 
-\bibitem{Schierl10}
-Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', in {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
-
 \bibitem{Amonou07}
 I.~Amonou, N.~Cammas, S.~Kervadec, S.~Pateux, ``Optimized Rate-distortion Extraction with Quality Layers in the Scalable Extension of H.264/AVC'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~17, no.~9, pp.~1186--1193, Sep. 2007.
+
+\bibitem{JSVM}
+Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Team (JVT) of ISO-IEC MPEG \& ITU-T VCEG, N9195, Sep. 2007.
 
 \bibitem{Sun09}
 J.~Sun, W.~Gao, D.~Zhao, W.~Li, ``On Rate-distortion Modeling and Extraction of H.264/SVC Fine-Granular Scalable Video'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~19, no.~3, pp.~323--336, Mar. 2009.
@@ -772,11 +768,27 @@ E.~Maani, A.~K. Katsaggelos, ``Optimized Bit Extraction Using Distortion Modelin
 \bibitem{Zhang12}
 W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model,'' {\em 2012 IEEE International Symposium on Circuits and Systems}, pp.~1887--1890, Seoul, Korea, May 2012.
 
-\bibitem{Meng14}
-Shengbin Meng, Jun Sun, Yizhou Duan, Zongming Guo, ``An Efficient Method For No-Reference H.264/SVC Bitstream Extraction'', {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, Florence, Italy, May, 2014.
+\bibitem{Gao06}
+K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', in {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
 
-\bibitem{Meng14-PID}
-Shengbin Meng, Jun Sun, Yilei Wang, Zongming Guo, ``A PID-based Quality Control Algorithm for SVC Video Streaming'', {\em IEEE International Conference on Communications}, Sydney, Australia, June, 2014.
+\bibitem{Schierl10}
+Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', in {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
+
+\bibitem{Winken08}
+M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proc. International Conference on Image Processing 2008}.
+
+%\bibitem{Meng14}
+%Shengbin Meng, Jun Sun, Yizhou Duan, Zongming Guo, ``An Efficient Method For No-Reference H.264/SVC Bitstream Extraction'', {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, Florence, Italy, May, 2014.
+
+%\bibitem{Meng14-PID}
+%Shengbin Meng, Jun Sun, Yilei Wang, Zongming Guo, ``A PID-based Quality Control Algorithm for SVC Video Streaming'', {\em IEEE International Conference on Communications}, Sydney, Australia, June, 2014.
+
+\bibitem{H264Overview}
+T.~Wiegand, G.~J. Sullivan, G.~Bj$\o$ntegaard, A.~Luthra, ``Overview of the H.264/AVC Video Coding Standard'', in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 13, no. 7, pp.~560--576, Jul. 2003.
+
+\bibitem{GreedyAlgo}
+P.~E.~Black, ``Greedy Algorithm'' in {\em Dictionary of Algorithms and Data Structures} [online], U.S. National Institute of Standards and Technology, Feb. 2005.
+\newblock http://www.nist.gov/dads/HTML/greedyalgo.html
 
 \bibitem{PID}
 http://en.wikipedia.org/wiki/PID\_controller
@@ -798,16 +810,6 @@ B. Li and K. Nahrstedt, ``A control-sased middleware framework for Quality-of-Se
 
 \bibitem{Ziegler42}
 J. B. Ziegler and N. B. Nichols, ``Optimum settings for automatic controllers'', in {\em ASME Trans.}, pp. 759-768, 1942.
-
-\bibitem{Winken08}
-M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proc. International Conference on Image Processing 2008}.
-
-\bibitem{H264Overview}
-T.~Wiegand, G.~J. Sullivan, G.~Bj$\o$ntegaard, A.~Luthra, ``Overview of the H.264/AVC Video Coding Standard'', in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 13, no. 7, pp.~560--576, Jul. 2003.
-
-\bibitem{GreedyAlgo}
-P.~E.~Black, ``Greedy Algorithm'' in {\em Dictionary of Algorithms and Data Structures} [online], U.S. National Institute of Standards and Technology, Feb. 2005.
-\newblock http://www.nist.gov/dads/HTML/greedyalgo.html
 
 \bibitem{Netlimiter}
 NetLimiter: http://www.netlimiter.com/
