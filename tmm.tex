@@ -285,15 +285,22 @@ The rest of this paper is organized as follows. In section \ref{sec:analysis}, w
 \section{Problem Analysis and Related Works}
 \label{sec:analysis}
 
-In this section, we analyze the two most concerned problems in SVC adaptive video streaming, i.e., bitstream extraction and quality control, and introduce some existing related works on them.
+In this section, we analyze the two most concerned problems in SVC adaptive video streaming, i.e., bitstream extraction and quality control, and introduce some related works on them.
 
 \subsection{Bitstream Extraction}
 
-SVC bitstream extraction is substantially a combinatorial optimization problem. More specifically, it is in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. In the ``0-1 Knapsack Problem", given a set of objects, each with a weight and a value, one decides which object to include in the knapsack so that the total weight is no more than a given limit and the total value is as large as possible. Similarly, in bitstream extraction problem, each NALU data packet can be treated as an item with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
+Bitstream extraction is the operation of choosing a subset of data packets from a whole SVC bitstream to form a sub-stream. Fig. \ref{fig:Bitstream-Extraction} illustrates the structure of an SVC stream and a possible way to extract a sub-stream from it. The data packets in the stream are divided into different layers. The temporal layer (T0$\sim$T3) reflects the reference or dependency relationship between the frames, shown by the arrows on the top pointing from the frame which is referenced to the frame which is dependent on the reference. The quality layer (Q0$\sim$Q2) indicates scalability of video quality within each frame. The dash line demonstrates the sample extraction which will keep the data packets below the line and discard all the packets above it. This is only one option of the many possible ways, because there are many combinations of packets to be discarded. Our goal, however, is to choose a way that maximums the video quality of the extracted sub-stream, under the constrain of a give bitrate. 
 
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.9\linewidth]{Bitstream-Extraction.jpg}
+\caption{Bitstream extraction of SVC \label{fig:Bitstream-Extraction}}
+\end{figure}
+
+SVC bitstream extraction, as we can see, is substantially a combinatorial optimization problem. More specifically, it is in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. 
 Generally, the optimal solution of a typical ``0-1 Knapsack Problem" can be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between packets. First, the value of a packet is not obvious and certain, since a packet's contribution to video quality may depend on the other packets. Second, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
 
-In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM  \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is  a training-based model, more computation is needed to get robust model parameters.
+In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM  \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is a training-based model, more computation is needed to get robust model parameters.
 
 In our previous work \cite{Zhang12}, we noticed the mismatch between quadratic calculations in distortion criteria like MSE or PSNR and the essential linear operations in the coding process, and proposed a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated. The linear error model exploits the linear feature of pixel value errors and achieves good performance in distortion estimation and bitstream extraction with reference. However, this work assumes that the original video sequence is available for reference, which is not always true. Adaptation to handle the special characteristic of the no-reference case is lacking in the previous work and included in this paper.
 
@@ -318,45 +325,45 @@ Being able to adjust bitrate is the prerequisite for an adaptive video streaming
 \label{sec:model}
 
 In H.264/AVC, the decoding process involves a linear feature described in \cite{Winken08}, neglecting any rounding, clipping, and deblocking filtering operation. According to this feature, the main steps in H.264/AVC coding -- prediction, transform and quantization -- are proximately linear operations, and the whole coding process can be expressed in a matrix format as follows:
-	\begin{equation}
-	\label{eq:linear}
+\begin{equation}
+\label{eq:linear}
 s = {\rm\bf M}s + {\rm\bf T}c + p \: ,
-	\end{equation}
+\end{equation}
 It means, the reconstructed samples of a GOP (Group of Pictures), denoted by $s$, can be viewed as a linear combination of previously reconstructed samples in the GOP, the residual samples, and a static predictor. In (\ref{eq:linear}), $c$ refers to the transform coefficient values and $p$ is a static predictor; $M$ and $T$ are square matrices such that the product $M$s gives the MCP (Motion Compensated Prediction) signal and $Tc$ gives the residual values. The actual values of $M$ depend on the selected macroblock types, reference indices and motion vectors, whereas the actual values of $T$ depend on the chosen QP (Quantization Parameter) values.
 
 We apply the above linear decoding model to the case of quality scalability of SVC and get a linear error model. According to (\ref{eq:linear}), for a bitstream just containing the base layer, we have:
-	\begin{equation}
-	\label{eq:base0}
+\begin{equation}
+\label{eq:base0}
 s_{B} = {\rm\bf M}s_{B} + {\rm\bf T}_{B}c_{B} + p \: ,
-	\end{equation}
+\end{equation}
 where the subscript $B$ indicates the base layer variables. In quality scalability, the enhancement is mainly the refinement of transform coefficients, so for a bitstream containing an enhancement packet set $I_1$, the reconstruction relationship can be expressed as:
-	\begin{equation}
-	\label{eq:subset1}
+\begin{equation}
+\label{eq:subset1}
 s_{I_1} = {\rm\bf M}s_{I_1} + {\rm\bf T}_{B} c_{B} + \Big( \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) + p \: ,
-	\end{equation}
+\end{equation}
 where $i$ refers to an enhancement packet as an element of $I_1$. $c_i$ is a vector containing coefficients within the enhancement packet $i$. ${\rm\bf T_i}$ is the transform matrix depending on the QP value of $i$. ${\rm\bf T}_i c_i$ gives the residual sample values decoded from $i$.
 
 Similarly, for another bitstream containing an enhancement packet set $I_2$, we have
-	\begin{equation}
-	\label{eq:subset2}
+\begin{equation}
+\label{eq:subset2}
 s_{I_2} = {\rm\bf M}s_{I_2} + {\rm\bf T}_{B} c_{B} + \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i \Big) + p \: .
-	\end{equation}
+\end{equation}
 
 Suppose $I_1$ is a subset of $I_2$, their reconstruction difference can be obtained by (\ref{eq:subset2}) - (\ref{eq:subset1}):
-	\begin{equation}
-	\label{eq:minus1}
+\begin{equation}
+\label{eq:minus1}
 (s_{I_2} - s_{I_1}) = {\rm\bf M}(s_{I_2} - s_{I_1}) + \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i - \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) \: ,
-	\end{equation}
-	\begin{equation}
-	\label{eq:minus2}
+\end{equation}
+\begin{equation}
+\label{eq:minus2}
 \Rightarrow e = s_{I_2} - s_{I_1} = ({\rm\bf I - M})^{-1} \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i - \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) \: .
-	\end{equation}
+\end{equation}
 	
 Particularly, if the difference of $I_2$ and $I_1$ is a single enhancement packet $j$, i.e. $I_2 \setminus I_1 = \{j\}$, then according to (\ref{eq:minus2}), the difference of the two reconstruction vectors can be written as
-	\begin{equation}
-	\label{eq:error_j}
+\begin{equation}
+\label{eq:error_j}
 e_j = ({\rm\bf I - M})^{-1} {\rm\bf T}_j c_j \: .
-	\end{equation}
+\end{equation}
 	
 Obviously, $e_j$ is only determined by packet $j$, and has no relation with other enhancement packets. This value is called the ``error vector'' of packet $j$, which represents the pixel value error caused by discarding the packet $j$. We can obtain the error vector of each enhancement packet by subtraction between video sequences reconstructed from two enhancement packet subsets $I_1$ and $I_2$, with $I_1 \subseteq I_2$ and $I_2 \setminus I_1 =\{j\} $. Once all packets' error vectors are obtained, the distortion caused by discarding a group of packets can be estimated by adding up the error vector of each packet in the group.
 
@@ -365,26 +372,25 @@ The above model is called Linear Error Model (LEM). Note that in equations (\ref
 
 \subsection{Error Vector Acquisition}
 
- It would need too many decoding times to get the error vectors of all enhancement packets if we calculate them one at a time. In order to acquire error vectors of all enhancement packets efficiently, we separate all enhancement packets into several groups, such that in each group multiple error vectors can be obtained independently at the same time.
+It would need too many decoding times to get the error vectors of all enhancement packets if we calculate them one at a time. In order to acquire error vectors of all enhancement packets efficiently, we separate all enhancement packets into several groups, such that in each group multiple error vectors can be obtained independently at the same time.
  
- \begin{figure}[h]
- \centering
- \includegraphics[width = 0.9\linewidth]{GOPStructure.jpg}
- \caption{Group of pictures (GOP) in SVC \label{fig:GOP_Structure}}
- \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.9\linewidth]{GOPStructure.jpg}
+\caption{Group of pictures (GOP) in SVC \label{fig:GOP_Structure}}
+\end{figure}
  
- Consider a video bitstream with 8-frame GOPs (Group of Pictures) shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame''\cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). So the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with the Quality Layer information acquisition in JSVM \cite{Amonou07}. Since computation is mainly consumed with this decoding in the bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
+Consider a video bitstream with 8-frame GOPs (Group of Pictures) shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame''\cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). So the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with the Quality Layer information acquisition in JSVM \cite{Amonou07}. Since computation is mainly consumed with this decoding in the bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
  
 \subsection{Distortion Estimation and Model Verification}
 
 Based on the linear error model described above, we can obtain error vectors of all enhancement packets. Then we can estimate the distortion caused by discarding any set of enhancement packets, by adding up the error vector of each packet in that set.
 
 For example, consider a video sequence decoded from a sub-stream which is extracted by discarding packet set $I_x$. The error between this sequence and the original sequence can be estimated as
-
-	\begin{equation}
-	\label{eq:subset_error}
+\begin{equation}
+\label{eq:subset_error}
 e(I_x) = e_{full} + \sum_{i \in {I_x}} e_i \: .
-	\end{equation}
+\end{equation}
 Eq. (\ref{eq:subset_error}) has taken into consideration the error between the video sequence decoded from full enhancement packets and the original sequence, written as $e_{full}$.
 
 To verify the linear error model, we conduct an experiment where possible combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. The video stream has 8-frame GOPs and three quality layers, the same as illustrated in Fig. \ref{fig:GOP_Structure}. Experimental result of the sequence {\em Foreman} is partly shown in Fig. \ref{fig:linear_verification}. The horizontal axis stands for sample point numbers of those possible combinations, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a randomly extracted substream, and the dot line shows the estimated MSE using our Linear Error Model. A 0.6\% maximum relative error of MSE demonstrates the accuracy of the proposed model.
@@ -400,10 +406,10 @@ To verify the linear error model, we conduct an experiment where possible combin
 \label{subsec:priority}
 
 In this subsection, we utilize the Linear Error Model to enable R-D optimized bitstream extraction. Since finding the global optimal solution of the bitstream extraction problem is impractical, our bitstream extraction algorithm uses a greedy method \cite{GreedyAlgo} to get a sub-optimal solution. Similar to the greedy solution of the ``0-1 Knapsack Problem", every time a packet is to be discarded, we choose the packet that has the minimal R-D impact. A packet's R-D impact is mathematically measured by:
-	\begin{equation}
-	\label{eq:rd_impact}
+\begin{equation}
+\label{eq:rd_impact}
 \Phi_{i} = \dfrac{\partial D}{\partial R} \: ,
-	\end{equation}
+\end{equation}
 where $\partial D$ represents the distortion change brought by discarding this packet, and $\partial R$ is the corresponding rate change. $\partial R$ is simply equivalent to the size of this packet, while $\partial D$ needs to be calculated by subtraction of distortions before and after the packet is discarded. 
 
 We simulate a process of discarding all the enhancement packets from a stream, using the above greedy strategy. During this process, the discarding order of a packet is regarded as its priority and recorded. Then the packets' priority values can be stored in the bitstream (either in the priority id field of the NALU header or in separate SEI messages) for real extraction in the future.
@@ -539,7 +545,7 @@ The whole process of this algorithm is described in Algorithm \ref{algo:control}
     	\STATE curr\_bitrate = bitrate\_of\_level[new\_level]
     \ENDIF
     \STATE send packet according to new quality level
-  \end{algorithmic}
+\end{algorithmic}
 \end{algorithm}
 
 
@@ -593,23 +599,18 @@ Among other bitstream extraction methods besides that of JSVM, the work in \cite
 \centering
 \begin{tabular}{c|c|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}| 
 p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}}
-
 %% |l|l| to left justify each column entry
 %% |c|c| to center each column entry
 %% use of \rule[]{}{} below opens up each row 
-
 \hline \hline
 \multicolumn{2}{c|}{Sequence} &
 {\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
-
 \multirow{2}{*}{JSVM QL\footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL} (dB)}
 & Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints} & 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
 & Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints} & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
-
 \multirow{2}{*}{JSVM no QL (dB)}
 & Max & 0.50 & 0.83 & 0.32 & 0.29 & 0.50 & 0.34 & 0.61 & 0.53 \\ \cline{2-10}
 & Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \hline
-
 \end{tabular}
 \end{minipage}
 \end{table*}
@@ -762,11 +763,17 @@ Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Tea
 \bibitem{Sun09}
 J.~Sun, W.~Gao, D.~Zhao, W.~Li, ``On Rate-distortion Modeling and Extraction of H.264/SVC Fine-Granular Scalable Video'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~19, no.~3, pp.~323--336, Mar. 2009.
 
+\bibitem{Ramanathan12}
+P.~Ramanathan and N.~Jayant. ``RD optimized bitstream extraction for H. 264/SVC based video streaming'' In {\em Proceedings of IEEE International Conference on Image Processing}, pp. 2241-2244, 2012.
+
+\bibitem{Yang13}
+K.~Yang, S.~Wan, Y.~Gong, and Y.~Feng. ``A fast algorithm of bitstream extraction using distortion prediction based on simulated annealing'' In {\em Journal of Visual Communication and Image Representation}, no.7, 752-759, 2013.
+
 \bibitem{Maani09}
 E.~Maani, A.~K. Katsaggelos, ``Optimized Bit Extraction Using Distortion Modeling in the Scalable Extension of H.264/AVC'' in {\em IEEE Trans. Image Processing}, vol.~18, no.~9, pp.~2022--2029, Sep. 2009.
 
 \bibitem{Zhang12}
-W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model,'' {\em 2012 IEEE International Symposium on Circuits and Systems}, pp.~1887--1890, Seoul, Korea, May 2012.
+W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model,'' {\em Proceedings of IEEE International Symposium on Circuits and Systems}, pp.~1887--1890, Seoul, Korea, May 2012.
 
 \bibitem{Gao06}
 K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', in {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
@@ -775,7 +782,7 @@ K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video co
 Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', in {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
 
 \bibitem{Winken08}
-M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proc. International Conference on Image Processing 2008}.
+M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proceedings of IEEE International Conference on Image Processing}, 2008.
 
 %\bibitem{Meng14}
 %Shengbin Meng, Jun Sun, Yizhou Duan, Zongming Guo, ``An Efficient Method For No-Reference H.264/SVC Bitstream Extraction'', {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, Florence, Italy, May, 2014.
@@ -797,7 +804,7 @@ http://en.wikipedia.org/wiki/PID\_controller
 K. J. Astrom, Control System Design, pp 216-219, 2002.
 
 \bibitem{Wong04}
-C.W.Wong, O.C.Au and H.K.Lam, ``PID-based real-time rate control'', in {\em IEEE International Conference on Multimedia and Expo}, 1: 221-224, 2004.
+C.W.Wong, O.C.Au and H.K.Lam, ``PID-based real-time rate control'', in {\em Proceedings of IEEE International Conference on Multimedia and Expo}, 1: 221-224, 2004.
 
 \bibitem{Yang10}
 J. Yang, Y. Sun, Y. Zhou, S. Sun, ``Incremental rate control for H.264 scalable video coding'', in {\em IEEE Global Telecommunications Conference}, Miami, Florida, Dec. 2010.
