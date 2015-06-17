@@ -158,7 +158,7 @@
 % was not built to handle multiple paragraphs
 %
 \author{Shengbin~Meng,~Jun~Sun,~Yizhou~Duan~and~Zongming~Guo,~\em{Member,~IEEE} % <-this % stops a space
-\thanks{Manuscript received April 10, 2015.}
+\thanks{Manuscript received May 20, 2015.}
 \thanks{The authors are with the Institute of Computer Science and Technology, Peking University, Beijing%
 , 100080, China (e-mail: shengbin@pku.edu.cn; sunjun@pku.edu.cn; duanyizhou@pku.edu.cn; guozongming@pku.edu.cn).}}
 
@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-To cope with the challenge brought by bandwidth fluctuation and provide the user with video of both smooth and high quality, an adaptive video streaming framework which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and verified for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on the basis of that, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed framework integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The framework is deployed at online video website www.7dlive.com and proves to be practically effective.
+To cope with the challenge brought by bandwidth fluctuation and provide the user with best online video watching experience, an adaptive video streaming system which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and verified for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on that basis, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed system integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The system is deployed at online video website www.7dlive.com and proves to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -289,7 +289,7 @@ In this section, we analyze the two most concerned problems in SVC adaptive vide
 
 \subsection{Bitstream Extraction}
 
-Bitstream extraction is the operation of choosing a subset of data packets from a whole SVC bitstream to form a sub-stream. It makes the bitrate adjustable and is the prerequisite of an adaptive streaming system. Fig. \ref{fig:Bitstream-Extraction} illustrates the structure of an SVC stream and a possible way to extract a sub-stream from it. The data packets in the stream are divided into different layers. The temporal layer (T0$\sim$T3) reflects the reference or dependency relationship between the frames, shown by the arrows on the top pointing from the referenced frame to the frame which is dependent on it. The quality layer (Q0$\sim$Q2) indicates scalability of video quality within each frame, and packets in the higher quality layers (i.e., Q1 and Q2) are partially discarded to implement the extraction. For example, the dash line demonstrates the sample extraction which will keep the data packets below the line and discard all the packets above it. There are many combinations of packets to be discarded, which means there are many possible ways for an extraction. Our goal, however, is to choose a way that maximums the video quality of the extracted sub-stream, under the constraint of a given bitrate.
+Bitstream extraction is the operation of choosing a subset of data packets from a whole SVC bitstream to form a sub-stream. It makes the bitrate adjustable and is the prerequisite of an adaptive streaming system. Fig. \ref{fig:Bitstream-Extraction} illustrates the structure of an SVC stream and a possible way to extract a sub-stream from it. The data packets in the stream are divided into different layers. The temporal layer (T0$\sim$T3) reflects the reference or dependency relationship between the frames, shown by the arrows on the top pointing from the referenced frame to the frame which is dependent on it. The quality layer (Q0$\sim$Q2) indicates scalability of video quality within each frame, and packets in the higher quality layers (i.e., Q1 and Q2) are partially discarded to implement the extraction. For example, the dash line demonstrates the extraction which will keep the data packets below the line and discard all the packets above it. 
 
 \begin{figure}[h]
 \centering
@@ -297,9 +297,9 @@ Bitstream extraction is the operation of choosing a subset of data packets from 
 \caption{Bitstream extraction of SVC \label{fig:Bitstream-Extraction}}
 \end{figure}
 
-As we can see, in its nature SVC bitstream extraction is a combinatorial optimization problem. More specifically, it is in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. In the ``0-1 Knapsack Problem", given some objects, each with a weight and a value, one decides which object to include in the knapsack so that the total weight is no more than a given limit and the total value is as large as possible. Similarly, in bitstream extraction problem, each data packet can be treated as an item with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
+As we can see, in its nature SVC bitstream extraction is a combinatorial optimization problem. There are many combinations of packets to be discarded, and we want to choose a combination that maximums the video quality of the extracted sub-stream, under the constraint of a given bitrate. More specifically, this problem in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. Each data packet can be treated as an object with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
 
-For a typical ``0-1 Knapsack Problem", the optimal solution can generally be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between the stream's data packets. First, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. For example, in Fig. \ref{fig:Bitstream-Extraction}, we cannot include the packet in Q2 of a frame without including the packet in Q1 of the same frame. Second, the value of a packet is not obvious and certain, since a packet's contribution to video quality may depend on the other packets. Unless we discard a packet and calculate the distortion it causes for real, there is no way to exactly tell its value. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
+For a typical ``0-1 Knapsack Problem", the optimal solution can generally be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between the stream's data packets. First, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. For example, in Fig. \ref{fig:Bitstream-Extraction}, we cannot include the Q2 packet of a frame without including the Q1 packet of the same frame. Second, the value of a packet is not obvious and certain, since a packet's contribution to video quality may depend on the other packets. Unless we discard a packet and calculate the distortion it causes for real, there is no way to exactly tell its value. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
 
 In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM  \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is a training-based model, more computation is needed to get robust model parameters.
 Ramanathan et al. \cite{Ramanathan12} proposed their concept and calculation method of the ``Quality Metadata'' to signal and use in bitstream extraction. Yang et al. \cite{Yang13} proposed a method based-on simulated annealing to solve the bitstream extraction problem. In both methods, the accuracy of distortion estimation is the key of the performance.
@@ -396,12 +396,12 @@ e(I_x) = e_{full} + \sum_{i \in {I_x}} e_i \: .
 \end{equation}
 Eq. (\ref{eq:subset_error}) has taken into consideration the error between the video sequence decoded from full enhancement packets and the original sequence, written as $e_{full}$.
 
-To verify the linear error model, we conduct an experiment where possible combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. The video stream has 8-frame GOPs and three quality layers, the same as illustrated in Fig. \ref{fig:GOP_Structure}. Experimental result of the sequence {\em Foreman} is partly shown in Fig. \ref{fig:linear_verification}. The horizontal axis stands for sample point numbers of those possible combinations, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a randomly extracted substream, and the dot line shows the estimated MSE using our Linear Error Model. A 0.6\% maximum relative error of MSE demonstrates the accuracy of the proposed model.
+To verify the linear error model, we conduct an experiment where random combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. Experimental result of the sequence {\em Foreman} is shown in Fig. \ref{fig:model_verification}. The bitstream has 8-frame GOPs and three quality layers, the same as illustrated in Fig. \ref{fig:GOP_Structure}. There are 33 frames in the sequence. The horizontal axis stands for frame index, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a frame, and the dot line shows the estimated MSE using our Linear Error Model. It can be seen that the two lines are very close to each other, which demonstrates the accuracy of the proposed model. The distortion estimation error is less than 5\% in our experiments.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.9\linewidth]{LinearVerification.jpg}
-\caption{Result of SVC Linear Error Model verification \label{fig:linear_verification}}
+\includegraphics[width = 0.9\linewidth]{ModelVerification.png}
+\caption{Result of SVC Linear Error Model verification \label{fig:model_verification}}
 \end{figure}
 
 
@@ -644,10 +644,10 @@ Since STP and LTP have their own limitations, we implement the PID-based quality
 
 \begin{figure*}[t]
 \subfloat[Average quality level of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{Quality-all.jpg}
+\includegraphics[width=0.5\textwidth]{Quality-all.png}
 \label{fig:quality-all}}
 \subfloat[Variance of quality level of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{Variance-all.jpg}
+\includegraphics[width=0.5\textwidth]{Variance-all.png}
 \label{fig:variance-all}}
 \caption{Comparison of the long/short time prediction and the PDF algorithm in DSS}
 \label{fig:performance-all}
@@ -656,10 +656,10 @@ Since STP and LTP have their own limitations, we implement the PID-based quality
 \begin{figure*}[t]
 \centering
 \subfloat[Variance of quality level of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{Quality-two.jpg}
+\includegraphics[width=0.5\textwidth]{Quality-two.png}
 \label{fig:quality-two}}
 \subfloat[Average quality level of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{Variance-two.jpg}
+\includegraphics[width=0.5\textwidth]{Variance-two.png}
 \label{fig:variance-two}}
 \caption{Comparison of the proposed PID algorithm and the PDF algorithm in DDS}
 \label{fig:performance-two}
@@ -683,7 +683,7 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 
 \begin{figure}[t]
 \centering
-\includegraphics[width = 0.9\linewidth]{Fluctuation.jpg}
+\includegraphics[width = 0.9\linewidth]{Fluctuation.png}
 \caption{Video quality fluctuation with time \label{fig:fluctuation}}
 \end{figure}
 
@@ -691,11 +691,11 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 
 After combining the two algorithms together, the proposed adaptive streaming system is able to deliver a higher and smoother video quality for the user. We compare the proposed system's performance with DSS that supports SVC but has its original quality control method and JSVM Basic bitstream extraction. The result for the same test stream as used in subsection \ref{subsec:exp-control} is present in Fig. \ref{fig:fluctuation-psnr}. It shows PSNR change perceived by the user when available bandwidth fluctuates around 800 kbps. It can be seen that, the proposed system has effectively avoided unnecessary quality drop (note the curve around time 50s and 350s) and been able to keep a relatively higher PSNR value (note the curve between time 450s and 600s). The average and variance of PSNR delivered by the proposed system are 40.62 and 0.28, respectively, while the values of the baseline system are 40.29 and 0.66.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR-wide.jpg}
+\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR.png}
 \caption{User-perceived PSNR change with time when bandwidth fluctuates \label{fig:fluctuation-psnr}}
-\end{figure*}
+\end{figure}
 
 \section{Conclusion}
 \label{sec:conclusion}
