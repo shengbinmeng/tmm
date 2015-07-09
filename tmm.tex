@@ -222,7 +222,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-To cope with the challenge brought by bandwidth fluctuation and provide the user with best online video watching experience, an adaptive video streaming system which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and verified for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on that basis, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed system integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.66 to 0.28, and at the same time deliver higher video quality, with an average PSNR gain of 0.33dB. The system is deployed at online video website www.7dlive.com and proves to be practically effective.
+To cope with the challenge brought by bandwidth fluctuation and provide the user with best online video watching experience, an adaptive video streaming system which can adjust video quality according to actual bandwidth condition is proposed based on the Scalable Video Coding (SVC) extension of H.264/AVC. First, a simple and effective linear error model is proposed and verified for quality scalability of SVC. The model exploits the linear feature of pixel value errors and can be used to accurately estimate the distortion caused by discarding any combination of enhancement data packets in an SVC bitstream. Then on that basis, a greedy-like algorithm is designed to assign each data packet a priority value according to its Rate-Distortion (R-D) impact, thus enables R-D optimized bitstream extraction under certain bitrate constraint. Finally, the Proportional-Integral-Derivative (PID) method is utilized to control the video quality adjustment and determine the suitable bitrate for transmission. By monitoring and predicting bandwidth information of the past, the current and the future, the PID-based quality control algorithm can significantly reduce quality fluctuation while still keeping a high quality level. Experimental results show that, comparing with the baseline software, the proposed system integrating the above algorithms can achieve much lower video quality fluctuation, with PSNR variance reduced from 0.63 to 0.21, and at the same time deliver higher video quality, with an average PSNR gain of 0.66dB. The system is deployed at online video website www.7dlive.com and proves to be practically effective.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -396,7 +396,7 @@ e(I_x) = e_{full} + \sum_{i \in {I_x}} e_i \: .
 \end{equation}
 Eq. (\ref{eq:subset_error}) has taken into consideration the error between the video sequence decoded from full enhancement packets and the original sequence, written as $e_{full}$.
 
-To verify the linear error model, we conduct an experiment where random combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. The video stream has 33 frames, and the same GOP structure and quality layers as illustrated in Fig. \ref{fig:GOP_Structure}. One comparison result for the sequence {\em Foreman} is shown in Fig. \ref{fig:model_verification}. The horizontal axis stands for frame index, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a frame, and the dot line shows the estimated MSE using our Linear Error Model. It can be seen that the two lines are very close to each other, which demonstrates the accuracy of the proposed model. Table \ref{tab:estimation-error} lists the distortion estimation error for different sequences and shows that the average error is only about 5\%.
+To verify the linear error model, we conduct an experiment where random combinations of enhancement packets are removed from a video bitstream, and the distortion estimated by the linear error model are compared with the actual distortion caused by the removal. The video stream has the same GOP structure and quality layers as illustrated in Fig. \ref{fig:GOP_Structure}. One comparison result for the sequence {\em Foreman} (only first 33 frames are used) is shown in Fig. \ref{fig:model_verification}. The horizontal axis stands for frame index, and the vertical axis for MSE measurement. The solid line represents the actual MSE of a frame, and the dot line shows the estimated MSE using our Linear Error Model. It can be seen that the two lines are very close to each other, which demonstrates the accuracy of the proposed model. Table \ref{tab:estimation-error} lists the distortion estimation error for different sequences and shows that the average error is only about 5\%.
 
 \begin{figure}[h]
 \centering
@@ -691,7 +691,7 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 \end{table*}
 
 
-\begin{figure}[t]
+\begin{figure}
 \centering
 \includegraphics[width = 0.9\linewidth]{Fluctuation.png}
 \caption{Video quality fluctuation with time \label{fig:fluctuation}}
@@ -699,13 +699,26 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 
 \subsection{Result of the Combined System}
 
-After combining the two algorithms together, the proposed adaptive streaming system is able to deliver a higher and smoother video quality for the user. We compare the proposed system's performance with DSS that supports SVC but has its original quality control method and JSVM Basic bitstream extraction. The result for the same test stream as used in subsection \ref{subsec:exp-control} is present in Fig. \ref{fig:fluctuation-psnr}. It shows PSNR change perceived by the user when available bandwidth fluctuates around 800 kbps. It can be seen that, the proposed system has effectively avoided unnecessary quality drop (note the curve around time 50s and 350s) and been able to keep a relatively higher PSNR value (note the curve between time 450s and 600s). The average and variance of PSNR delivered by the proposed system are 40.62 and 0.28, respectively, while the values of the baseline system are 40.29 and 0.66.
+After combining the two algorithms together, the proposed adaptive streaming system is able to deliver a higher and smoother video quality for the user. We compare the proposed system's performance with DSS that supports SVC but has its original quality control method and JSVM Basic bitstream extraction. The result for the same test stream as used in subsection \ref{subsec:exp-control} is present in Fig. \ref{fig:fluctuation-psnr}. It shows PSNR change perceived by the user when available bandwidth fluctuates around certain values (600kbps, 800kbps, 1000kbps and 1200kbps). The bandwidth conditions are simulated with NetLimiter and intense fluctuations are observed. It can be seen that, the proposed system performs better in that it has effectively avoided unnecessary quality drop (e.g., note the curve around time 450s in Fig. \ref{fig:Fluctuation-PSNR1} or around 250s in Fig. \ref{fig:Fluctuation-PSNR3}) and been able to keep a relatively higher PSNR value (e.g., note the curve around time 400s in Fig. \ref{fig:Fluctuation-PSNR2} or around time 500s in Fig. \ref{fig:Fluctuation-PSNR4}). The average and variance value of PSNR is also calculated and present in Fig. \ref{fig:fluctuation-psnr}, which showing clearly the proposed system's advantage. For instance, in Fig. \ref{fig:Fluctuation-PSNR4} where bandwidth fluctuates around 1200kbps, the average PSNR delivered by the proposed system is 41.14dB, 0.66dB higher than that of the baseline system, and the PSNR variance is also reduced from 0.63 to 0.21, indicating a more smooth video quality change.
 
-\begin{figure}[t]
+
+\begin{figure*}[t]
 \centering
-\includegraphics[width = 0.9\linewidth]{Fluctuation-PSNR.png}
+\subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 39.63 and 0.24, while in the proposed system are 39.69 and 0.16.]{
+\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR1.png}
+\label{fig:Fluctuation-PSNR1}}\hfill
+\subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 40.15 and 0.48, while in the proposed system are 40.62 and 0.28.]{
+\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR2.png}
+\label{fig:Fluctuation-PSNR2}}
+\qquad
+\subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 40.37 and 0.50, while in the proposed system are 40.74 and 0.28.]{
+\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR3.png}
+\label{fig:Fluctuation-PSNR3}}\hfill
+\subfloat[Bandwidth fluctuates around 1200kbps: PSNR average and variance in the original system are 40.48 and 0.63, while in the proposed system are 41.14 and 0.21.]{
+\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR4.png}
+\label{fig:Fluctuation-PSNR4}}
 \caption{User-perceived PSNR change with time when bandwidth fluctuates \label{fig:fluctuation-psnr}}
-\end{figure}
+\end{figure*}
 
 \section{Conclusion}
 \label{sec:conclusion}
