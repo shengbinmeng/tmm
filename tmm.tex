@@ -158,7 +158,7 @@
 % was not built to handle multiple paragraphs
 %
 \author{Shengbin~Meng,~Jun~Sun,~Yizhou~Duan~and~Zongming~Guo,~\em{Member,~IEEE} % <-this % stops a space
-\thanks{Manuscript received May 20, 2015.}
+\thanks{Manuscript received July 15, 2015.}
 \thanks{The authors are with the Institute of Computer Science and Technology, Peking University, Beijing%
 , 100080, China (e-mail: shengbin@pku.edu.cn; sunjun@pku.edu.cn; duanyizhou@pku.edu.cn; guozongming@pku.edu.cn).}}
 
@@ -646,7 +646,7 @@ For simplicity and intuition, we combine the enhancement layers in the tested SV
 \end{tabular}
 \end{table*}
 
-We simulate network fluctuation by adjusting bandwidth around a certain level. We set this level from 400 to 1400 kbps to reflect different average bandwidth. All the experiments are conducted in Visual C++ 6.0 (with DSS as the software platform) and the bandwidth control is implemented by NetLimiter 3 \cite{Netlimiter}. The baseline algorithm in the comparison refers to the packet delay feedback (PDF) algorithm in the original DSS.
+We simulate network fluctuation by adjusting bandwidth around a certain level. We set this level from 400 to 1400 kbps to reflect different average bandwidth. All the experiments are conducted with DSS as the software platform and the bandwidth control implemented by NetLimiter 3 \cite{Netlimiter}. The baseline algorithm in the comparison refers to the packet delay feedback (PDF) algorithm in the original DSS.
 
 First of all, we conduct some preliminary improvement experiments using only proportional part or integral part. Since they are directly related to the short term error and long term error respectively, we call them Short Term Prediction (STP) and Long Term Prediction (LTP). Fig. \ref{fig:performance-all} shows the experimental results of these two control algorithms and the baseline algorithm. In the figures, the video quality is measured by the quality level defined in the beginning of this section, and quality smoothness is indicated by the variance of the quality levels along time. We can conclude that STP provides the best average quality level at the expense of high quality variance. This can be easily explained since this quality control strategy closely follows the bandwidth fluctuation. In contrast, LTP keeps a relatively low quality variance at a little cost of average video quality. Although it is not as good as STP in average quality, it still outperforms the baseline algorithm by 7.9\%.
 
@@ -704,17 +704,17 @@ After combining the two algorithms together, the proposed adaptive streaming sys
 
 \begin{figure*}[t]
 \centering
-\subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 39.63 and 0.24, while in the proposed system are 39.69 and 0.16.]{
+\subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 39.63 and 0.24, while in the proposed system are 39.69 (increased by 0.06) and 0.16 (reduced by 0.08).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR1.png}
 \label{fig:Fluctuation-PSNR1}}\hfill
-\subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 40.15 and 0.48, while in the proposed system are 40.62 and 0.28.]{
+\subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 40.15 and 0.48, while in the proposed system are 40.62 (increased by 0.47) and 0.28 (reduced by 0.20).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR2.png}
 \label{fig:Fluctuation-PSNR2}}
 \qquad
-\subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 40.37 and 0.50, while in the proposed system are 40.74 and 0.28.]{
+\subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 40.37 and 0.50, while in the proposed system are 40.74 (increased by 0.40) and 0.28 (reduced by 0.22).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR3.png}
 \label{fig:Fluctuation-PSNR3}}\hfill
-\subfloat[Bandwidth fluctuates around 1200kbps: PSNR average and variance in the original system are 40.48 and 0.63, while in the proposed system are 41.14 and 0.21.]{
+\subfloat[Bandwidth fluctuates around 1200kbps: PSNR average and variance in the original system are 40.48 and 0.63, while in the proposed system are 41.14 (increased by 0.66) and 0.21(reduced by 0.42).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR4.png}
 \label{fig:Fluctuation-PSNR4}}
 \caption{User-perceived PSNR change with time when bandwidth fluctuates \label{fig:fluctuation-psnr}}
