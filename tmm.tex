@@ -259,15 +259,15 @@ video streaming, quality control, bitstream extraction, distortion model, Scalab
 % Some journals put the first two words in caps:
 % \IEEEPARstart{T}{his demo} file is ....
 % 
-\IEEEPARstart{V}{ideo} streaming applications are becoming more and more popular on the Internet. Examples of the most common usage scenarios include VOD (Video On Demand), live broadcasting, video-based online education, etc. In these applications, video data is constantly delivered to different clients over various transmission channels, and the client media player can begin playing the video before the entire file has been transmitted. Among other features, video streaming makes it easy to watch video anywhere and anytime, and is an increasingly important way for people to consume video content.
+\IEEEPARstart{V}{ideo} streaming applications are becoming more and more popular on the Internet. Examples of the most common usage scenarios include online video-on-demand (VoD), live broadcasting, video chat, video-based online education, etc. In these applications, video data is constantly delivered to different clients over various transmission channels, and the client media player can begin playing the video before the entire file has been transmitted. Among other features, video streaming makes it easy to watch video anywhere and anytime, which represents the concept of Ubiquitous Multimedia Access (UMA), a very common topic within the multimedia community during the past few years \cite{Gualdi08}. And due to its convenience, video streaming has also attracted a large number of users and become an increasingly important way for people to consume video content \cite{Chen13}.
 
-One of the biggest challenge for video streaming is the variety of users' network environment. A user might use different types of network (Ethernet, Wi-Fi, Cellular, etc.) and might also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth will change from time to time, influenced by the overall traffic. Within such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the user to get best watching experience. To cope with this challenge, the video streaming system should be able to automatically adjust the video's bitrate or quality according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
+Although efforts on the new software defined networking (SDN) are made to facilitate efficient video streaming \cite{Egilmez13}, currently traditional best-effort networks still dominate, and the variety of users' network environment remains to be one of the biggest challenges for video streaming. A user might use different types of network (Ethernet, Wi-Fi, Cellular, etc.) and might also switch from one type to another (e.g., from Wi-Fi to cellular network) on going. Even in the same network, the user's bandwidth will change from time to time, influenced by the overall traffic. Within such an environment, bandwidth fluctuation is inevitable. If the video is streamed at a constant bitrate, it would be difficult or impossible for the user to get best watching experience. To cope with this challenge, the video streaming system should be able to automatically adjust the video's bitrate or quality according to the bandwidth change. In other words, the video streaming system needs to be adaptive.
 
 There are generally two options to enable adaptive video streaming. The first option is called simulcast, where several independent bitstreams, each with different video quality, are stored at the server, and the client selects one of them according to currently available bandwidth. Dynamic Adaptive Streaming over HTTP (DASH) \cite{DASH}, which is standardized by the Moving Picture Expert Group (MPEG), belongs to this option. The second option is to adopt the Scalable Video Coding (SVC) \cite{SVC} technology, an extension of the H.264/AVC video coding standard \cite{SVCOverview}, which allows scalability of video bitrate and quality with only one single bitstream. In SVC, a video bitstream is composed of small data packets called Network Abstract Layer Units (NALUs). These NALUs are separated into one base layer for basic video quality and multiple enhancement layers for video quality improvement. By discarding NALUs of the enhancement layers, the bitstream can be extracted to provide the most appropriate data rate and video quality as required.
 
-The advantage of simulcast systems is that they need little modification of existing infrastructure and therefore are easy to deploy. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity that simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, to adopt SVC in the video streaming framework is a promising option and has attracted much attention \cite{Zhu2013}\cite{Dan2013}\cite{Yang2014}.
+The advantage of simulcast systems like DASH is that they need little modification of existing infrastructure (servers, proxies, caches, firewall compatibility, etc.) and therefore are easy to deploy \cite{Bouten14}. Most commercial video websites, YouTube \cite{YouTube} for instance, use this option to enable quality adaptation. However, the adaptive range and granularity that simulcast provides is limited to the number of streams (YouTube videos have 5 quality levels at most: 240p, 360p, 480p, 720p and 1080p), and the processing and storage of multiple video streams significantly increase time and space cost. SVC streaming systems, on the contrary, do not have above shortcomings. Since an SVC video bitstream can be extracted at the granularity of one NALU (a very small partition of data), it is able to provide seamless scalability and quality adaptation. Besides, performance analysis \cite{SVCPerformance} shows that SVC also has much higher coding efficiency than simulcast, despite some computation and bitrate overhead comparing with single layer stream. Therefore, to adopt SVC in the video streaming framework is a promising option and has attracted much attention in the study \cite{Chuah12}-\cite{Cicalò14}.
 
-In the SVC adaptive video streaming system, there are two key problems that need to be addressed well. First, as the prerequisite of the adaption to bandwidth change, the whole bitstream needs to be extracted so that sub-streams with various bitrates can be obtained. This is called the bitstream extraction problem. Optimal bitstream extraction algorithm aims to extract a sub-stream with best video quality, or minimal distortion, under the constraint of a given bitrate. Second, when the bandwidth changes with time, it's necessary to make decisions about whether and how to adjust the bitrate or video quality. This problem is called quality control, which means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. A good quality control algorithm should determine a suitable bitrate for current bandwidth condition, and keep the video quality both smooth and at a high level.
+While these studies mostly focus on Quality of Service (QoS) optimization and resource allocation for specific networks, there are two key problems in the SVC adaptive video streaming system that need to be primarily addressed. First, as the prerequisite of the adaption to bandwidth change, the whole bitstream needs to be extracted so that sub-streams with various bitrates can be obtained. This is called the bitstream extraction problem. Optimal bitstream extraction algorithm aims to extract a sub-stream with best video quality, or minimal distortion, under the constraint of a given bitrate. Second, when the bandwidth changes with time, it's necessary to make decisions about whether and how to adjust the bitrate or video quality. This problem is called quality control, which means controlling the video quality (or the video bitrate, from the transmission point of view) to follow the change of the bandwidth. A good quality control algorithm should determine a suitable bitrate for current bandwidth condition, and keep the video quality both smooth and at a high level.
 
 In this paper, an efficient adaptive video streaming system based on SVC is proposed with the above two problems better solved. Apple Darwin Streaming Server (DSS) \cite{DSS}, which is open-sourced and has been widely used to stream multimedia contents in practice, is chosen as the basis of the proposed system. The original DSS project is modified and SVC support is added to it, for the purpose of both research and application. Then novel algorithms for bitstream extraction and quality control are designed and implemented to achieve significant improvement in terms of user-perceived video quality. The contributions of our work can be summarized as follows:
 \begin{itemize}
@@ -532,7 +532,7 @@ long\_check\_interva{l_t} = \sum\limits_{\tau = {T_l}}^t {check\_interva{l_\tau}
 \end{equation}
 
 
-In (\ref{eq:ut}), $K_p$, $K_i$, and $K_d$ indicate the tuning parameters for proportional, integral and derivative parts respectively, and $E_p^t$, $E_i^t$, $E_d^t$ stand for the corresponding observed value for each part, which are defined in (\ref{eq:ep}) - (\ref{eq:long-check}); the controller output $u_t$ is utilized to calculate an appropriate data rate and further to determine which quality level we should transmit (see Algorithm \ref{algo:control} for more details).
+In (\ref{eq:ut}), $K_p$, $K_i$, and $K_d$ indicate the tuning parameters for proportional, integral and derivative parts respectively, and $E_p^t$, $E_i^t$, $E_d^t$ stand for the corresponding observed value for each part, which are defined in (\ref{eq:ep})-(\ref{eq:long-check}); the controller output $u_t$ is utilized to calculate an appropriate data rate and further to determine which quality level we should transmit (see Algorithm \ref{algo:control} for more details).
 
 In (\ref{eq:long-actual}) and (\ref{eq:long-check}), $T_l$ stands for the last quality change time. Theoretically, the integral part should be recorded and calculated since the system starts. In practice, however, bandwidth may vary significantly during the transmission. If the integral part was recorded for too long time, it may not reflect the real network status and may slow down the reaction for better quality level. A compromise here is to choose a relatively long time, i.e., the time from last quality change till now, for the integral part calculation.
 
@@ -760,6 +760,15 @@ Since the next generation video coding standard High Efficiency Video Coding (HE
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
 
+\bibitem{Gualdi08}
+G. Gualdi, A. Prati, and R. Cucchiara, ``Video Streaming for Mobile Video Surveillance'', in {\em IEEE Transactions on Multimedia}, vol. 10, no. 6, pp.1142-1154, 2008.
+
+\bibitem{Chen13}
+Y. Chen, B. Zhang, Y. Liu, and W. Zhu, ``Measurement and Modeling of Video Watching Time in a Large-Scale Internet Video-on-Demand System'', in {\em IEEE Transactions on Multimedia}, vol. 15, no. 8, pp.2087-2098, 2013.
+
+\bibitem{Egilmez13}
+H. E. Egilmez, S. Civanlar, and A. M. Tekalp, ``An Optimization Framework for QoS-Enabled Adaptive Video Streaming Over OpenFlow Networks'', in {\em IEEE Transactions on Multimedia}, vol. 15, no. 3, pp.710-715, 2013.
+
 \bibitem{DASH}
 T. Stockhammer, ``Dynamic adaptive streaming over HTTP: standards and design principles", in {\em Proceedings of the second annual ACM conference on Multimedia systems}, 2011.
 
@@ -767,7 +776,10 @@ T. Stockhammer, ``Dynamic adaptive streaming over HTTP: standards and design pri
 T.~Wiegand, G.~Sullivan, J.~Reichel, H.~Schwarz, M.~Wien, eds., ``Joint Draft ITU-T Rec. H.264|ISO/IEC 14496-10/Amd.3 Scalable Video Coding'', Joint Video Team, Doc. JVT-X201 Jul. 2007.
 
 \bibitem{SVCOverview}
-H.~Schwarz, D.~Marpe and T.~Wiegand, ``Overview of the scalable video coding extension of the H.264/AVC standard'', in {\em IEEE Trans. Circuits. Syst. Video Technol.}, vol. 17, no. 9, pp.~1103-1120, Sept. 2007.
+H.~Schwarz, D.~Marpe, and T.~Wiegand, ``Overview of the scalable video coding extension of the H.264/AVC standard'', in {\em IEEE Trans. Circuits. Syst. Video Technol.}, vol. 17, no. 9, pp.~1103-1120, Sept. 2007.
+
+\bibitem{Bouten14}
+N. Bouten, S. Latré, J. Famaey, W. V. Leekwijck, and F. D. Turck, ``In-Network Quality Optimization for Adaptive Video Streaming Services'', in {\em IEEE Transactions on Multimedia}, vol. 16, no. 8, pp.2281-2293, 2014.
 
 \bibitem{YouTube}
 https://www.youtube.com/
@@ -775,14 +787,20 @@ https://www.youtube.com/
 \bibitem{SVCPerformance}
 M. Wien , H. Schwarz and T. Oelbaum,  ``Performance Analysis of SVC'',  in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp.1194-1203. Sep. 2007.
 
-\bibitem{Zhu2013}
+\bibitem{Chuah12}
+S. Chuah, Z. Chen, and Y. Tan, ``Energy-Efficient Resource Allocation and Scheduling for Multicast of Scalable Video Over Wireless Networks'', in {\em IEEE Transactions on Multimedia}, vol. 14, no. 4, pp.1324-1336, 2012.
+
+\bibitem{Zhu13}
 Z. Zhu, S. Li, and X. Chen, ``Design QoS-aware multi-path provisioning strategies for efficient cloud-assisted SVC video streaming to heterogeneous clients'', in {\em IEEE Transactions on Multimedia}, vol. 15, no. 4, pp.758-768, 2013.
 
-\bibitem{Dan2013}
+\bibitem{Dan13}
 G. Dan, O. Hadar, R. Ohayon, and N. Amram, ``Live video streaming with adaptive pre-processing by using scalable video coding'', in {\em Proceedings of IEEE International Conference on Consumer Electronics (ICCE)}, pp.588-589, 2013.
 
-\bibitem{Yang2014}
+\bibitem{Yang14}
 E. Yang, Y. Ran, S. Chen, and J. Yang, ``A multicast architecture of SVC streaming over OpenFlow networks'', in {\em Proceedings of IEEE Global Communications Conference (GLOBECOM)}, pp.1323-1328, 2014.
+
+\bibitem{Cicalò14}
+S. Cicalò, and V. Tralli, ``Distortion-Fair Cross-Layer Resource Allocation for Scalable Video Transmission in OFDMA Wireless Networks'', in {\em IEEE Transactions on Multimedia}, vol. 16, no. 3, pp.848-863, 2014.
 
 \bibitem{DSS}
 http://dss.macosforge.org/
@@ -819,12 +837,6 @@ Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based me
 
 \bibitem{Winken08}
 M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proceedings of IEEE International Conference on Image Processing}, 2008.
-
-%\bibitem{Meng14}
-%Shengbin Meng, Jun Sun, Yizhou Duan, Zongming Guo, ``An Efficient Method For No-Reference H.264/SVC Bitstream Extraction'', {\em IEEE International Conference on Acoustics, Speech, and Signal Processing}, Florence, Italy, May, 2014.
-
-%\bibitem{Meng14-PID}
-%Shengbin Meng, Jun Sun, Yilei Wang, Zongming Guo, ``A PID-based Quality Control Algorithm for SVC Video Streaming'', {\em IEEE International Conference on Communications}, Sydney, Australia, June, 2014.
 
 \bibitem{H264Overview}
 T.~Wiegand, G.~J. Sullivan, G.~Bj$\o$ntegaard, A.~Luthra, ``Overview of the H.264/AVC Video Coding Standard'', in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 13, no. 7, pp.~560--576, Jul. 2003.
