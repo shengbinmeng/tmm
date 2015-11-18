@@ -282,7 +282,7 @@ The rest of this paper is organized as follows. In section \ref{sec:analysis}, w
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problem Analysis and Related Works}
+\section{Problem Analysis and Related Work}
 \label{sec:analysis}
 
 In this section, we analyze the two most concerned problems in SVC adaptive video streaming, i.e., bitstream extraction and quality control, and introduce some related works on them.
@@ -297,7 +297,7 @@ Bitstream extraction is the operation of choosing a subset of data packets from 
 \caption{Bitstream extraction of SVC \label{fig:Bitstream-Extraction}}
 \end{figure}
 
-As we can see, in its nature SVC bitstream extraction is a combinatorial optimization problem. There are many combinations of packets to be discarded, and we want to choose a combination that maximums the video quality of the extracted sub-stream, under the constraint of a given bitrate. More specifically, this problem in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. Each data packet can be treated as an object with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
+As we can see, in its nature SVC bitstream extraction is a combinatorial optimization problem. There are many combinations of packets to be discarded, and we want to choose a combination that maximizes the video quality of the extracted sub-stream, under the constraint of a given bitrate. More specifically, this problem fits in the form of ``0-1 Knapsack Problem" \cite{Knapsack}. Each data packet can be treated as an object with certain weight (the packet's size) and value (its contribution to the video quality). The solving process is mainly to decide whether or not a packet should be included in the final extracted sub-stream, or in the term of ``0-1 Knapsack Problem", to choose which object to pack up.
 
 For a typical ``0-1 Knapsack Problem", the optimal solution can generally be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between the stream's data packets. First, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. For example, in Fig. \ref{fig:Bitstream-Extraction}, we cannot include the Q2 packet of a frame without including the Q1 packet of the same frame. Second, the value of a packet is not obvious and certain, since a packet's contribution to video quality may depend on other packets. Unless we discard a packet and calculate the distortion it causes for real, there is no way to exactly tell its value. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
 
@@ -312,7 +312,7 @@ Quality control is the second problem we will address in this paper. The result 
 
 For a quality control algorithm, there are three targets that should be achieved. First is to ensure the continuity of video playing. In real-time streaming system, each data packet has its own playtime, which is also regarded as the deadline of the transmission. If the packet does not arrive at client side before the deadline, the media player will be paused due to lack of data, and that should be avoided. The second is to keep a smooth video quality. Although network conditions may change rapidly, it is necessary for the streamed video to maintain a relatively stable quality level, since frequent change of video quality will lead to poor user experience. The third target is to make the video quality as good as possible. In other words, the available bandwidth should be fully utilized. Suppose we keep sending video data in a low bitrate (with low video quality as well), neither the playback will pause nor any quality fluctuation will happen. However, a low video quality is certainly not what we want.
 
-The state-of-art solutions to avoid video pause in client media player mainly focus on how to select and schedule the video packets. In \cite{Gao06}, K. Gao et al. proposed a priority based scheduling strategy which guarantees packets of higher importance will be transmitted earlier. Among the packets with the same priority, those having the earliest deadline will be transmitted first. A similar solution is proposed in \cite{Schierl10}, where video data is pre-buffered in several buffers of different priorities. Whenever re-buffering occurs, quality will be degraded to a lower level to meet the time and rate constraint. Although the priority based scheduling strategies perform well in maintaining a non-paused video playing, they do not take quality fluctuation into account. As a result, users may still suffer from the frequent fluctuation of video quality.
+The state-of-the-art solutions to avoid video pause in client media player mainly focus on how to select and schedule the video packets. In \cite{Gao06}, K. Gao et al. proposed a priority based scheduling strategy which guarantees packets of higher importance will be transmitted earlier. Among the packets with the same priority, those having the earliest deadline will be transmitted first. A similar solution is proposed in \cite{Schierl10}, where video data is pre-buffered in several buffers of different priorities. Whenever re-buffering occurs, quality will be degraded to a lower level to meet the time and rate constraint. Although the priority based scheduling strategies perform well in maintaining a non-paused video playing, they do not take quality fluctuation into account. As a result, users may still suffer from the frequent fluctuation of video quality.
 
 In the widely-used video streaming server DSS, quality control is implemented by monitoring packet delay (the difference between current time and the playing time of this packet). When a new packet is ready to be sent to streaming buffer, DSS checks the delay of it and compares this delay with some pre-set thresholds to judge whether and how violently the quality change should be made. This algorithm can reduce quality fluctuation to some degree. However, it only provides conservative quality change, which makes its reaction so slow that sometimes media player may have already stopped due to lack of video data before quality drops. Furthermore, this algorithm does not keep track of the bandwidth change so it cannot adjust the video quality accordingly. Quality oscillation might occur in this algorithm.
 
@@ -331,47 +331,47 @@ Being able to adjust bitrate is the prerequisite of an adaptive video streaming 
 In H.264/AVC, the decoding process involves a linear feature described in \cite{Winken08}, neglecting any rounding, clipping, and deblocking filtering operation. According to this feature, the main steps in H.264/AVC coding -- prediction, transform and quantization -- are proximately linear operations, and the whole coding process can be expressed in a matrix format as follows:
 \begin{equation}
 \label{eq:linear}
-s = {\rm\bf M}s + {\rm\bf T}c + p \: ,
+s = {\rm\bf M} \cdot s + {\rm\bf T} \cdot c + p \: ,
 \end{equation}
-It means, the reconstructed samples of a GOP (Group of Pictures), denoted by $s$, can be viewed as a linear combination of previously reconstructed samples in the GOP, the residual samples, and a static predictor. In (\ref{eq:linear}), $c$ refers to the transform coefficient values and $p$ is a static predictor; $M$ and $T$ are square matrices such that the product $M$s gives the MCP (Motion Compensated Prediction) signal and $Tc$ gives the residual values. The actual values of $M$ depend on the selected macroblock types, reference indices and motion vectors, whereas the actual values of $T$ depend on the chosen QP (Quantization Parameter) values.
+It means, the reconstructed samples of a GOP (Group of Pictures), denoted by $s$, can be viewed as a linear combination of previously reconstructed samples in the GOP, the residual samples, and a static predictor. In (\ref{eq:linear}), $c$ refers to the transform coefficient values and $p$ is a static predictor; ${\rm\bf M}$ and ${\rm\bf T}$ are square matrices such that the product ${\rm\bf M} \cdot s$ gives the MCP (Motion Compensated Prediction) signal and ${\rm\bf T} \cdot c$ gives the residual values. The actual values of ${\rm\bf M}$ depend on the selected macroblock types, reference indices and motion vectors, whereas the actual values of ${\rm\bf T}$ depend on the chosen QP (Quantization Parameter) values.
 
 We apply the above linear decoding model to the case of quality scalability of SVC and get a Linear Error Model (LEM). According to (\ref{eq:linear}), for a bitstream just containing the base layer, we have:
 \begin{equation}
 \label{eq:base0}
-s_{B} = {\rm\bf M}s_{B} + {\rm\bf T}_{B}c_{B} + p \: ,
+s_{B} = {\rm\bf M} \cdot s_{B} + {\rm\bf T}_{B} \cdot c_{B} + p \: ,
 \end{equation}
 where the subscript $B$ indicates the base layer variables. In quality scalability, the enhancement is mainly the refinement of transform coefficients, so for a bitstream containing an enhancement packet set $I_1$, the reconstruction relationship can be expressed as:
 \begin{equation}
 \label{eq:subset1}
-s_{I_1} = {\rm\bf M}s_{I_1} + {\rm\bf T}_{B} c_{B} + \Big( \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) + p \: ,
+s_{I_1} = {\rm\bf M} \cdot s_{I_1} + {\rm\bf T}_{B} \cdot c_{B} + \Big( \sum_{i \in I_1}{\rm\bf T}_i \cdot c_i \Big) + p \: ,
 \end{equation}
-where $i$ refers to an enhancement packet as an element of $I_1$. $c_i$ is a vector containing coefficients within the enhancement packet $i$. ${\rm\bf T_i}$ is the transform matrix depending on the QP value of $i$. ${\rm\bf T}_i c_i$ gives the residual sample values decoded from $i$.
+where $i$ refers to an enhancement packet as an element of $I_1$. $c_i$ is a vector containing coefficients within the enhancement packet $i$. ${\rm\bf T_i}$ is the transform matrix depending on the QP value of $i$. ${\rm\bf T}_i \cdot c_i$ gives the residual sample values decoded from $i$.
 
 Similarly, for another bitstream containing an enhancement packet set $I_2$, we have
 \begin{equation}
 \label{eq:subset2}
-s_{I_2} = {\rm\bf M}s_{I_2} + {\rm\bf T}_{B} c_{B} + \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i \Big) + p \: .
+s_{I_2} = {\rm\bf M} \cdot s_{I_2} + {\rm\bf T}_{B} \cdot c_{B} + \Big( \sum_{i \in I_2}{\rm\bf T}_i \cdot c_i \Big) + p \: .
 \end{equation}
 
 Suppose $I_1$ is a subset of $I_2$, their reconstruction difference can be obtained by (\ref{eq:subset2}) - (\ref{eq:subset1}):
 \begin{equation}
 \label{eq:minus1}
-(s_{I_2} - s_{I_1}) = {\rm\bf M}(s_{I_2} - s_{I_1}) + \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i - \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) \: ,
+(s_{I_2} - s_{I_1}) = {\rm\bf M} \cdot (s_{I_2} - s_{I_1}) + \Big( \sum_{i \in I_2}{\rm\bf T}_i \cdot c_i - \sum_{i \in I_1}{\rm\bf T}_i \cdot c_i \Big) \: ,
 \end{equation}
 \begin{equation}
 \label{eq:minus2}
-\Rightarrow e = s_{I_2} - s_{I_1} = ({\rm\bf I - M})^{-1} \Big( \sum_{i \in I_2}{\rm\bf T}_i c_i - \sum_{i \in I_1}{\rm\bf T}_i c_i \Big) \: .
+\Rightarrow e = s_{I_2} - s_{I_1} = ({\rm\bf I - M})^{-1} \cdot \Big( \sum_{i \in I_2}{\rm\bf T}_i \cdot c_i - \sum_{i \in I_1}{\rm\bf T}_i \cdot c_i \Big) \: .
 \end{equation}
 	
 Particularly, if the difference of $I_2$ and $I_1$ is a single enhancement packet $j$, i.e. $I_2 \setminus I_1 = \{j\}$, then according to (\ref{eq:minus2}), the difference of the two reconstruction vectors can be written as
 \begin{equation}
 \label{eq:error_j}
-e_j = ({\rm\bf I - M})^{-1} {\rm\bf T}_j c_j \: .
+e_j = ({\rm\bf I - M})^{-1} \cdot {\rm\bf T}_j \cdot c_j \: .
 \end{equation}
 	
 Obviously, $e_j$ is only determined by packet $j$, and has no relation with other enhancement packets. This value is called the ``error vector'' of packet $j$, which represents the pixel value error caused by discarding the packet $j$. We can obtain the error vector of each enhancement packet by subtraction between video sequences reconstructed from two enhancement packet subsets $I_1$ and $I_2$, with $I_1 \subseteq I_2$ and $I_2 \setminus I_1 =\{j\} $. Once all packets' error vectors are obtained, the distortion caused by discarding a group of packets can be estimated by adding up the error vector of each packet in the group.
 
-Note that in equations (\ref{eq:base0})-(\ref{eq:subset2}) the value of M and p remain the same, since in the case of quality scalability the enhancement packets are generated only by manipulating the transform coefficients, and not interfered with the motion compensation and static prediction. This argument no longer holds for the other scalable dimensions (e.g., spatial scalability), so LEM does not simply apply for those cases. Therefor, only quality scalable videos are used in our system, and further research for other scalable dimensions can be our future work.
+Note that in equations (\ref{eq:base0})-(\ref{eq:subset2}) the value of ${\rm\bf M}$ and $p$ remain the same, since in the case of quality scalability the enhancement packets are generated only by manipulating the transform coefficients, and not interfered with the motion compensation and static prediction. This argument no longer holds for the other scalable dimensions (e.g., spatial scalability), so LEM does not simply apply for those cases. Therefore, only quality scalable videos are used in our system, and further research for other scalable dimensions can be our future work.
 
 \subsection{Error Vector Acquisition}
 
@@ -383,7 +383,7 @@ It would need too many decoding times to get the error vectors of all enhancemen
 \caption{Group of pictures (GOP) in SVC \label{fig:GOP_Structure}}
 \end{figure}
  
-Consider a video bitstream with 8-frame GOPs shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame''\cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). Therefore, the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with the Quality Layer information acquisition in JSVM \cite{Amonou07}. Since computation is mainly consumed with this decoding in the bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
+Consider a video bitstream with 8-frame GOPs shown in Fig. \ref{fig:GOP_Structure}. Base layer packets are colored black, and enhancement packets with the same color are allocated in one group. In each group, the enhancement packets' error vectors can be calculated simultaneously, since the pixel errors they caused are not interfered with each other. For example, the loss of packet 8 would bring about distortion only in frame 1, 2 and 3, while packet 10 only in frame 5, 6 and 7(frame number starts from 0). So we can do subtraction for this group, for one time, to gain error vectors $e_{8}$ and $e_{10}$, for both packets 8 and 10, as well as peer packets in all other GOPs. Note that these error vectors are highly sparse ones, because the discarding of a single enhancement packet can bring distortion only to a limited number of frames. To acquire all error vectors, the number of required extraction and decoding is approximately the number of enhancement layers $(L_Q - 1)$ times the temporal layer number $L_T$. For the example in Fig. \ref{fig:GOP_Structure}, $L_Q = 3$ and $L_T = 4$, so the theoretical extraction-and-decoding number is $(3 - 1) \times 4 = 8$. However, we have to do the same manipulation for $L_Q - 1 = 2$ more times, to dissociate the distortion impact of ``key frame'' \cite{H264Overview} (e.g. frame 0, 8, 16, etc.) packets. The loss of one enhancement packet in a key frame would bring distortion to two neighboring GOPs. As an instance, the loss of packet 4 would propagate drift into frame 1 to 15, which would interfere with the distortion impact of packets in frame 0 and 16 (packet 1, 2 and 19, 20). So key frame enhancement packets within the same quality layer (e.g. packet 2, 4 and 20) should be allocated in two groups -- one for key frame packets of even number GOPs (packet 2 and 20), the other for those of odd number GOPs (packet 4). Therefore, the actual number of extraction and decoding for error vector acquisition is $(L_Q - 1) \cdot (L_T + 1)$, approximately the same with the Quality Layer information acquisition in JSVM \cite{Amonou07}. Since computation is mainly consumed with this decoding in the bitstream extraction algorithm, the computation complexity has no obvious promotion compared with JSVM.
  
 \subsection{Distortion Estimation and Model Verification}
 
@@ -468,7 +468,7 @@ PID control \cite{PID}\cite{Astrom02} is a control loop feedback mechanism commo
 
 \begin{equation}
 \label{eq:pid-output}
-u(t) = {K_p}e(t) + {K_i}\int_0^t {e(\tau )d\tau }  + {K_d}\frac{d}{{dt}}e(t) \: ,
+u(t) = {K_p} \cdot e(t) + {K_i} \cdot \int_0^t {e(\tau )d\tau }  + {K_d} \cdot \frac{d}{{dt}}e(t) \: ,
 \end{equation}
 where $e(t)$ represents the error between process variable and setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters representing the proportional gain, integral gain and derivative gain respectively. Proportional part directly relates to the change of the process variable, and is also the main factor to adjust the process variable towards setpoint. There might be oscillations and steady-state errors in a pure proportional system, and they can be reduced or eliminated by adding the integral part. The appearance of derivative part is to predict future errors, so that the system tends to become steady early and quickly. The result of (\ref{eq:pid-output}) is used to manipulate the system input of next moment to adjust process variable towards setpoint.
 
@@ -503,7 +503,7 @@ As is introduced above, the \textit{actual\_check interval ratio} serves as the 
 
 \begin{equation}
 \label{eq:ut}
-{u_t} = {K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t ,
+{u_t} = {K_p} \cdot E_p^t + {K_i} \cdot E_i^t + {K_d} \cdot E_d^t ,
 \end{equation}
 
 \begin{equation}
@@ -550,7 +550,7 @@ The whole process of this algorithm is described in Algorithm \ref{algo:control}
     \STATE long\_check\_interval += check\_interval
     \STATE long\_actual\_interval += actual\_interval
     \STATE calculate $E_p^t$, $E_i^t$, $E_d^t$ according to Eq. (\ref{eq:ep}) - (\ref{eq:ed})
-    \STATE output = ${K_p}E_p^t + {K_i}E_i^t + {K_d}E_d^t$
+    \STATE output = ${K_p} \cdot E_p^t + {K_i} \cdot E_i^t + {K_d} \cdot E_d^t$
     \STATE new\_bitrate = output * curr\_bitrate
     \STATE new\_level = get\_level(new\_bitrate, bitrate\_of\_level[])
     \IF {quality level changed}
@@ -566,7 +566,7 @@ The whole process of this algorithm is described in Algorithm \ref{algo:control}
 \subsection{Parameter Selection}
 \label{subsec:parameter}
 
-Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_uT_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content. Therefore once the parameters are tuned they should apply well to different video streams.
+Ziegler--Nichols method \cite{Ziegler42} is used to tune $K_p$, $K_i$, and $K_d$ to obtain better performance of the PID control system. This method is performed by setting integral and derivative parameters to zero and then tuning $K_p$ to a value $K_u$ until output begins to oscillate with constant amplitude. Assuming the oscillation period is $T_u$, we set $K_p = 0.6K_u$, $K_i = 2K_u/T_u$, and $K_d = K_u \cdot T_u/8$. $K_p$, $K_i$, and $K_d$ are then normalized to get the final parameters. In the following experiments, parameters are chosen as $K_p = 0.22$, $K_i = 0.73$, $K_d = 0.05$ by this method. As with other control systems, PID parameters are a result of tunning and may not suit to all use cases. However, it should be noted that in the video quality control algorithm, only the data rate and the bandwidth are considered, not the video content. Therefore once the parameters are tuned they should apply well to different video streams.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
