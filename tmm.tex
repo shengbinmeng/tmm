@@ -599,7 +599,7 @@ We compare the performance of the proposed bitstream extraction method with that
 
 In our experiments, all test bitstreams are encoded with the JSVM encoder, where the standard hierarchical B coding structure and CABAC entropy coding are used. Each bitstream contains one base layer and a quality enhancement layer, with quantization parameters QP = 33 and QP = 27, respectively. The enhancement layer is further divided into 2 MGS layers by configuring the MGS vector to separate the transform coefficients into two groups (containing 4 and 12 coefficients respectively). For each test bitstream, ten bitrate points (one with all enhancement packets, one with only the base layer packets, and 8 points between) are chosen for extraction. For each bitrate point, the extraction is conducted using the bitstream extractors in JSVM, with and without quality layer (denoted as JSVM QL and JSVM Basic, respectively), and the proposed method. The size of the optimization window in the proposed method is set to 4 GOPs, with a GOP size of 8. All of the eight SVC standard sequences with CIF resolution are considered at 30FPS and tested in our experiments.
 
-The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:results}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
+The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:extraction-performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:results}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
 
 Among other bitstream extraction methods besides that of JSVM, the work in \cite{Maani09} achieves much better performance than JSVM QL, and even better than ours. However, the method of \cite{Maani09} needs more computation in order to train robust model parameters for different sequences, while the complexity of our method is always the same with JSVM QL.
 
@@ -619,13 +619,13 @@ Among other bitstream extraction methods besides that of JSVM, the work in \cite
 \includegraphics[width=0.5\textwidth]{Soccer.jpg}
 \label{fig:Soccer}}
 \caption{Performance of three bitstream extraction methods for various CIF sequences}
-\label{fig:performance}
+\label{fig:extraction-performance}
 \end{figure*}
 
 \begin{table*}[t]
 \centering
-\caption{Algorithm performance: Luma PSNR gain compared with JSVM}
-\label{tab:results}
+\caption{Luma PSNR gain compared with JSVM}
+\label{tab:extraction-gain}
 \begin{minipage}{0.95\linewidth}
 % \renewcommand{\thefootnote}{\thempfootnote}
 \centering
@@ -638,11 +638,36 @@ p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\cen
 \multicolumn{2}{c|}{Sequence} &
 {\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
 \multirow{2}{*}{JSVM QL\footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL} (dB)}
-& Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints} & 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
-& Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints} & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
+& Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints}
+& 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
+& Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints}
+& 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
 \multirow{2}{*}{JSVM no QL (dB)}
 & Max & 0.50 & 0.83 & 0.32 & 0.29 & 0.50 & 0.34 & 0.61 & 0.53 \\ \cline{2-10}
 & Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \hline
+\end{tabular}
+\end{minipage}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Luma PSNR gain compared with JSVM QL for different windows sizes}
+\label{tab:extraction-gain-more}
+\begin{minipage}{0.95\linewidth}
+% \renewcommand{\thefootnote}{\thempfootnote}
+\centering
+\begin{tabular}{c|c|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}| 
+p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}}
+%% |l|l| to left justify each column entry
+%% |c|c| to center each column entry
+%% use of \rule[]{}{} below opens up each row
+\hline \hline
+\multicolumn{2}{c|}{Sequence} &
+{\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
+\multirow{2}{*}{PSNR gain}
+& 32 frames & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \cline{2-10}
+& 48 frames & 0.12 & 0.23 & 0.16 & 0.13 & 0.15 & 0.13 & 0.08 & 0.21 \\ \hline
+
 \end{tabular}
 \end{minipage}
 \end{table*}
@@ -722,17 +747,17 @@ After combining the two algorithms together, the proposed adaptive streaming sys
 
 \begin{figure*}[t]
 \centering
-\subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 39.63 and 0.24, while in the proposed system are 39.69 (increased by 0.06) and 0.16 (reduced by 0.08).]{
+\subfloat[Bandwidth fluctuates around 400kbps: PSNR average and variance in the original system are 36.00 and 0.30, while in the proposed system are 36.50 (increased by 0.50) and 0.23 (reduced by 0.07).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR1.png}
 \label{fig:Fluctuation-PSNR1}}\hfill
-\subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 40.15 and 0.48, while in the proposed system are 40.62 (increased by 0.47) and 0.28 (reduced by 0.20).]{
+\subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 37.06 and 0.61, while in the proposed system are 37.32 (increased by 0.26) and 0.33 (reduced by 0.28).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR2.png}
 \label{fig:Fluctuation-PSNR2}}
 \qquad
-\subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 40.37 and 0.50, while in the proposed system are 40.74 (increased by 0.40) and 0.28 (reduced by 0.22).]{
+\subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 37.92 and 1.24, while in the proposed system are 38.75 (increased by 0.83) and 0.69 (reduced by 0.55).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR3.png}
 \label{fig:Fluctuation-PSNR3}}\hfill
-\subfloat[Bandwidth fluctuates around 1200kbps: PSNR average and variance in the original system are 40.48 and 0.63, while in the proposed system are 41.14 (increased by 0.66) and 0.21(reduced by 0.42).]{
+\subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 38.28 and 1.30, while in the proposed system are 38.94 (increased by 0.66) and 0.71 (reduced by 0.59).]{
 \includegraphics[width=0.47\textwidth]{Fluctuation-PSNR4.png}
 \label{fig:Fluctuation-PSNR4}}
 \caption{User-perceived PSNR change with time when bandwidth fluctuates \label{fig:fluctuation-psnr}}
