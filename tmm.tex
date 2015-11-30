@@ -142,6 +142,7 @@
 \usepackage{subfig}
 \usepackage{algorithm}
 \usepackage{balance}
+\usepackage{makecell}
 
 
 % paper title
@@ -595,9 +596,9 @@ To implement our proposed adaptive streaming system requires the combination of 
 
 We compare the performance of the proposed bitstream extraction method with that of JSVM 9.16.
 
-In our experiments, all test bitstreams are encoded with the JSVM encoder, where the standard hierarchical B coding structure and CABAC entropy coding are used. Each bitstream contains one base layer and a quality enhancement layer, with quantization parameters QP = 33 and QP = 27, respectively. The enhancement layer is further divided into 2 MGS layers by configuring the MGS vector to separate the transform coefficients into two groups (containing 4 and 12 coefficients respectively). For each test bitstream, ten bitrate points (one with all enhancement packets, one with only the base layer packets, and 8 points between) are chosen for extraction. For each bitrate point, the extraction is conducted using the bitstream extractors in JSVM, with and without quality layer (denoted as JSVM QL and JSVM Basic, respectively), and the proposed method. The size of the optimization window in the proposed method is set to 4 GOPs, with a GOP size of 8. All of the eight SVC standard sequences with CIF resolution are considered at 30FPS and tested in our experiments.
+In our experiments, all test bitstreams are encoded with the JSVM encoder, where the standard hierarchical B coding structure and CABAC entropy coding are used. Each bitstream contains one base layer and one enhancement layer, with quantization parameters QP = 33 and QP = 27, respectively. The enhancement layer is further divided into 2 Medium Grain Scalability (MGS) layers by configuring the MGS vector to separate the transform coefficients into two groups (containing 4 and 12 coefficients respectively). For each test bitstream, ten bitrate points (one with all enhancement packets, one with only the base layer packets, and 8 points between) are chosen for extraction. For each bitrate point, the extraction is conducted using the bitstream extractors in JSVM, with and without \textit{Quality Layers} (denoted as JSVM QL and JSVM Basic, respectively), and the proposed method. The size of the optimization window in the proposed method is set to 4 GOPs, with a GOP size of 8. All of the eight SVC standard sequences with CIF resolution are considered at 30FPS and tested in our experiments.
 
-The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:extraction-performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:extraction-gain}, which shows that our extraction method can achieve a significant performance gain compared with JSVM.
+The performance comparisons for City, Foreman, Harbour, and Soccer are shown in Fig. \ref{fig:extraction-performance}. It can be seen that the R-D curves of the proposed method are always on the top. For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table \ref{tab:extraction-gain}, which shows that our extraction method can achieve a significant performance gain compared with JSVM Basic, and also performs better than JSVM QL. Table \ref{tab:extraction-gain} also lists results when optimization window is 6 GOPs, i.e., 48 frames. It is demonstrated that a larger window size can increase performance to some degree. However, it should be noted that, the practical system we propose does not use optimization window exceeding 32 frames, for the reason stated in the end of Sub-section \ref{subsec:priority}.
 
 Among other bitstream extraction methods besides that of JSVM, the work in \cite{Maani09} achieves much better performance than JSVM QL, and even better than ours. However, the method of \cite{Maani09} needs more computation in order to train robust model parameters for different sequences, while the complexity of our method is always the same with JSVM QL.
 
@@ -622,7 +623,7 @@ Among other bitstream extraction methods besides that of JSVM, the work in \cite
 
 \begin{table*}[t]
 \centering
-\caption{Luma PSNR gain compared with JSVM}
+\caption{Luma PSNR gain of the proposed algorith compared with JSVM}
 \label{tab:extraction-gain}
 \begin{minipage}{0.95\linewidth}
 % \renewcommand{\thefootnote}{\thempfootnote}
@@ -635,37 +636,20 @@ p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\cen
 \hline \hline
 \multicolumn{2}{c|}{Sequence} &
 {\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
-\multirow{2}{*}{JSVM QL\footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL} (dB)}
+\multirow{2}{*}{JSVM QL, $K$ = 32 \footnote{\label{footnote:JSVM_QL} Comparing the proposed algorithm with JSVM QL; the optimization window containing 32 frames}}
 & Max\footnote{\label{footnote:max} Maximum PSNR gain through all bitrate constraints}
 & 0.37 & 0.50 & 0.13 & 0.22 & 0.23 & 0.19 & 0.25 & 0.44 \\ \cline{2-10}
 & Ave\footnote{\label{footnote:ave} Average PSNR gain through all bitrate constraints}
 & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \hline
-\multirow{2}{*}{JSVM no QL (dB)}
+\multirow{2}{*}{JSVM Basic, $K$ = 32}
 & Max & 0.50 & 0.83 & 0.32 & 0.29 & 0.50 & 0.34 & 0.61 & 0.53 \\ \cline{2-10}
-& Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \hline
-\end{tabular}
-\end{minipage}
-\end{table*}
-
-\begin{table*}[t]
-\centering
-\caption{Luma PSNR gain compared with JSVM QL for different windows sizes}
-\label{tab:extraction-gain-more}
-\begin{minipage}{0.95\linewidth}
-% \renewcommand{\thefootnote}{\thempfootnote}
-\centering
-\begin{tabular}{c|c|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}| 
-p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}|p{1.2cm}<{\centering}}
-%% |l|l| to left justify each column entry
-%% |c|c| to center each column entry
-%% use of \rule[]{}{} below opens up each row
-\hline \hline
-\multicolumn{2}{c|}{Sequence} &
-{\em Bus} & {\em City} & {\em Crew} & {\em Football} & {\em Foreman} & {\em Harbour} & {\em Mobile} & {\em Soccer} \\ \hline 
-\multirow{2}{*}{PSNR gain}
-& 32 frames & 0.11 & 0.11 & 0.05 & 0.12 & 0.05 & 0.05 & 0.06 & 0.13 \\ \cline{2-10}
-& 48 frames & 0.12 & 0.23 & 0.16 & 0.13 & 0.15 & 0.13 & 0.08 & 0.21 \\ \hline
-
+& Ave & 0.18 & 0.37 & 0.20 & 0.15 & 0.22 & 0.15 & 0.25 & 0.29 \\ \Xhline{2\arrayrulewidth}
+\multirow{2}{*}{JSVM QL, $K$ = 48}
+& Max & 0.36 & 0.39 & 0.27 & 0.30 & 0.30 & 0.38 & 0.21 & 0.40 \\ \cline{2-10}
+& Ave & 0.12 & 0.23 & 0.16 & 0.13 & 0.15 & 0.13 & 0.08 & 0.21 \\ \hline
+\multirow{2}{*}{JSVM Basic, $K$ = 48}
+& Max & 0.36 & 0.81 & 0.32 & 0.29 & 0.49 & 0.47 & 0.57 & 0.60 \\ \cline{2-10}
+& Ave & 0.19 & 0.40 & 0.19 & 0.17 & 0.28 & 0.22 & 0.28 & 0.42 \\ \hline
 \end{tabular}
 \end{minipage}
 \end{table*}
