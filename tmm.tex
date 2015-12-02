@@ -310,7 +310,7 @@ In our previous work \cite{Zhang12}, we proposed a linear error model for distor
 \subsection{Quality Control}
 \label{subsec:analysis-control}
 
-Quality control is the second problem we will address in this paper. The result of a quality control algorithm gives the suitable bitrate for current transmission, which is directly related to the change of the video quality delivered to the user. In an SVC streaming system, the bitrate determined by the quality control algorithm is used as the constraint under which bitstream extraction is performed. Even in non-SVC streaming systems (DASH, for example), quality control is an important part that requires careful design.
+Quality control is the second problem we will address in this paper. The result of a quality control algorithm gives the suitable bitrate for transmission, which is directly related to the change of the video quality delivered to the user. In an SVC streaming system, the bitrate determined by the quality control algorithm is used as the constraint under which bitstream extraction is performed. Even in non-SVC streaming systems (DASH, for example), quality control is an important part that requires careful design.
 
 For a quality control algorithm, there are three targets to be achieved. The first is to ensure the continuity of video playing. In real-time streaming system, each data packet has its own playtime, which is also regarded as the deadline of the transmission. If the packet does not arrive at client side before the deadline, the media player will be paused due to lack of data, and that should be avoided. The second is to keep a smooth video quality. Although network conditions may change rapidly, it is necessary for the streamed video to maintain a relatively stable quality level, since frequent change of video quality will lead to poor user experience. The third target is to make the video quality as good as possible. In other words, the available bandwidth should be fully utilized. Suppose we keep sending video data in a low bitrate (with low video quality as well), neither the playback will pause nor any quality fluctuation will happen. However, a low video quality is certainly not what the user want.
 
@@ -421,79 +421,66 @@ Before using the estimation based on LEM, we conduct an experiment to verify it.
 \subsection{Priority Assignment and Bitstream Extraction}
 \label{subsec:priority-assign}
 
-In this subsection, we utilize the linear error model to enable R-D optimized bitstream extraction. A greedy-like \cite{GreedyAlgo} bitstream extraction algorithm is proposed. Similar to the greedy solution of the ``0-1 Knapsack Problem", every time a packet is to be discarded, we choose the packet that has the minimal R-D impact. A packet's R-D impact is mathematically measured by:
+In this subsection, we utilize the linear error model to enable R-D optimized bitstream extraction. Similar to the greedy \cite{GreedyAlgo} solution of the ``0-1 Knapsack Problem", every time a packet is to be discarded, we choose the packet that has the minimal R-D impact. A packet's R-D impact is mathematically measured by:
 \begin{equation}
 \label{eq:rd_impact}
-\Phi_{i} = \dfrac{\partial D}{\partial R} \: ,
+\Phi = \dfrac{\partial D}{\partial R} \: ,
 \end{equation}
 where $\partial D$ represents the distortion change brought by discarding this packet, and $\partial R$ is the corresponding rate change. $\partial R$ is simply equivalent to the size of this packet, while $\partial D$ needs to be calculated by subtraction of distortions before and after the packet is discarded.
 
 We simulate a process of discarding all the enhancement packets from a stream, using the above greedy strategy. During this process, the discarding order of a packet is regarded as its priority and recorded. Then the packets' priority values can be stored in the bitstream (either in the priority identifier field of the NALU header or in supplementary enhancement information messages) for real extraction in the future.
 
-The detailed discarding and priority assignment process is described below:
-\begin{description}
-\item[1)] Initially, the sequence error vector, $e_{seq}$, is set to $e_{full}$, which is $e_{full}$ is defined in Eqation \).
-\item[2)] Within the packets that can be discarded, find the packet $m$ having the least RD impact on the sequence, \textit{i.e. }
+For long video sequences, an optimization window containing a certain number of frames is usually needed, and the priority assignment and bitstream extraction is conducted independently in each window. Suppose the size of the optimization window is $K$, i.e., there are $K$ frames involved in the above process, and each frame contains $L_Q$ quality layers (one base layer and $L_Q-1$ enhancement layers). Then the total number of enhancement packets that can be discarded is $K \cdot (L_Q-1)$, and in every greedy step, there are at most $K$ packets, i.e., the packets currently at the top of every frame (see analysis in \ref{subsec:analysis-extraction}), that can be selected to discard. Given that, the priority assignment process in each optimization window can be described in Algorithm \ref{algo:greedy}, with some terms in it explained below. The initial value $e_{full}$ is the error between the video sequence decoded from full enhancement packets and the original video sequence, already introduced in (\ref{eq:subset_error}). $\Phi_m$ is defined as:
 \begin{equation}
 \label{eq:R-D_impact_m}
 \Phi_m = \min_{i \in I_{top}} \Phi_i \: ,
 \end{equation}
-where $I_{top}$ stands for the top-layer packets, those currently able to be discarded. The RD impact of a packet is calculated based on (\ref{eq:rd_impact}), as follows: 
+where $I_{top}$ stands for the top-layer packets, those currently able to be discarded, and $\Phi_i$ denotes the RD impact of packet $i$. $\Phi_i$ is calculated based on (\ref{eq:rd_impact}):
 \begin{equation}
 \label{eq:R-D_impact_i}
-\Phi_i = \dfrac{\partial D}{\partial R} = \dfrac{PSNR(e_{seq}) - PSNR(e_{seq} + e_i)}{SIZE(i)} \: ,
+\Phi_i = \dfrac{\partial D}{\partial R} = \dfrac{PSNR(e_{seq}) - PSNR(e_{seq} + e_i)}{SIZE(i)} \:,
 \end{equation}
-where $PSNR(*)$ means to obtain PSNR from the error vector, and $SIZE(i)$ is the size of packet $i$.
-\item[3)]The packet, $m$, is then removed from the bitstream, and its error vector is added to the sequence's error vector, \textit{i.e.}
-\begin{equation}
-\label{eq:error_update}
-e_{seq} = e_{seq} + e_m \: .
-\end{equation}
-\item[4)]The process from 2) to 3) is repeated until all enhancement packets are discarded, and every packet is assigned a priority value according to the removing order.
-\end{description}
-
-For long video sequences, an optimization window containing a certain number of frames is usually needed, and the priority assignment and bitstream extraction is conducted independently in each window. Suppose the size of the optimization window is $K$, i.e., there are $K$ frames involved in the above priority assignment process, and each frame contains $L_Q$ quality layers (one base layer and $L_Q-1$ enhancement layers). Then the number of top layer packets in step 2) of the process is $K$, and the total number of packets that can be discarded is $K \cdot (L_Q-1)$. Given that, the priority assignment process in each optimization window can be more specifically described in Algorithm \ref{algo:greedy}. It is easy to see that the computational complexity of this priority assignment algorithm is $O(K^2)$. Note that this computational complexity is negligible compared with the decoding process needed in the error vector acquisition.
+where $SIZE(i)$ is the size of packet $i$, and $PSNR(*)$ is the function to obtain PSNR from an error vector. To be clear, PSNR is defined via mean squared error (MSE), i.e., the average of the squares of the elements in the error vector.
 
 \begin{algorithm}
 \caption{Greedy-like bitstream extraction algorithm}
 \label{algo:greedy}
 \begin{algorithmic}
-    \STATE Set $e_{seq}$ to $e_{full}$, and set $p$ to 0.
+    \STATE Initialize $e_{seq}$ to $e_{full}$, and $p$ to 0.
     \WHILE{$p < K \cdot (L_Q - 1)$}
-	    \FOR{$K$ top layer packets}
-		    \STATE Find the packet $m$ which has least RD impact
+	    \FOR{the $K$ top layer packets}
+		    \STATE Find the packet $m$ which has least RD impact $\Phi_m$
 		\ENDFOR
 		\STATE Set the priority value of packet $m$ to $p$
 		\STATE Remove $m$ from the sequence
-		\STATE Set $e_{seq}$ to $e_{seq} + e_m$, and set $p$ to $p+1$
+		\STATE Update $e_{seq}$ to $e_{seq} + e_m$, and update $p$ to $p+1$
     \ENDWHILE
 \end{algorithmic}
 \end{algorithm}
 
-A larger optimization window means each time we have more packets to compare and determine their priorities. Therefore, choosing a larger $K$ has the potential of more optimized extraction. However, doing this will also increase the computational complexity as well as the memory used to store the error vectors. Besides, if the 6-bit priority identifier field of the NALU header is used to store the priority values, only a range of 0$\sim$63 is supported, which also limits the value of $K$.
+It is easy to see that the computational complexity of this priority assignment algorithm is $O(K^2)$. Note that this computational complexity is negligible compared with the decoding process needed in the error vector acquisition. With a larger optimization window we have more packets to compare and determine their priorities, which will potentially result in more optimized extraction. However, doing this will also increase the computational complexity and, more noticeably, the memory used to store the error vectors. Besides, if the priority values are to be stored and signaled using the 6-bit priority identifier field of the NALU header \cite{Amonou07}, only a range of 0$\sim$63 is supported, which also limits the value of $K$.
 
 \subsection{The No-Reference Case}
 \label{subsec:noref-case}
 
-In some scenarios, the priority assignment and bitstream extraction needs to be conducted without access to the original YUV sequence. For example, if the bitstream extraction is not done at the encoding side, it's most likely that the original sequence is not available. This would make the bitstream extraction a more difficult problem, since the distortion is harder to obtain for lacking of reference signal. Comparing to the problem of SVC bitstream extraction with reference, this kind of ``no-reference bitstream extraction'' problem is actually more frequently encountered in real practice. In this subsection, we consider this no-reference problem and modify the proposed algorithm to meet the special characteristic caused by lacking of reference.
+In some scenarios, the priority assignment and bitstream extraction needs to be conducted without access to the original video sequence. This would make the bitstream extraction a more difficult problem, since the distortion is harder to obtain for lacking of reference signal. The ``no-reference bitstream extraction'' problem is actually more frequently encountered in real practice, since it is common that streaming service provider only have the compressed bitstream rather than the video source. In this subsection, we consider this no-reference case and modify the proposed algorithm to meet the special characteristic caused by lacking of reference.
 
-In the no-reference case, since we do not have access to the original sequence, we can not get the error between the video sequence decoded from full enhancement packets and the original sequence, which is $e_{full}$ used above. A straightforward idea is to set $e_{full}$ to zero, meaning we calculate distortion with respect to the fully reconstructed signal, rather than to the original sequence. However, simply doing so causes the algorithm to perform badly in experiments. We find that, since discarding some enhancement packets will not bring much significant error relative to the fully reconstructed signal, the calculated PSNR values are too large to well represent the real distortion. To address this issue, instead of calculating PSNR, we directly use MSE of all pixels as the distortion criteria in the priority assignment algorithm. This proves to be an effective solution, and the extraction performance turns out to be much better.
+Without the original video sequence, we can not get the error between the video sequence decoded from full enhancement packets and the original sequence, which is $e_{full}$ used in \ref{algo:greedy}. A straightforward idea is to set $e_{full}$ to zero, meaning all distortions are calculated with respect to the fully reconstructed signal, rather than to the original sequence. However, simply doing so causes the algorithm to perform badly in experiments. It is found that, since discarding some enhancement packets will not bring much significant error, the calculated PSNR values are too large to well represent the real distortion. To address this issue, instead of calculating PSNR, we directly use MSE of all pixels as the distortion criteria in the priority assignment algorithm. This proves to be an effective solution, and the extraction performance turns out to be much better.
 
-After each packet is assigned a priority value and optimized extraction is made possible, the video stream now can well adapt to different data rates. Next, we propose the quality control algorithm based on the PID mechanism, which is responsible for determining a suitable data rate according to current bandwidth condition.
+After each packet is assigned a priority value and optimized extraction is made possible, the video stream now can well adapt to different data rates. Next, we propose the quality control algorithm based on the PID mechanism, which is responsible for determining the suitable data rate for transmission according to current network condition.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PID-based Quality Control Algorithm}
 \label{sec:quality-control}
 
-PID control \cite{PID}\cite{Astrom02} is a control loop feedback mechanism commonly used in industrial control systems. \textit{Process variable} and \textit{setpoint} are two core concepts in PID control. The process variable stands for the current status of the system. The setpoint is the target for this control system to reach. The goal of PID control is to minimize the error between process variable and setpoint by adjusting system inputs. The controller output $u(t)$ is defined as follows:
-
+PID controller \cite{PID}\cite{Astrom02} is a control loop feedback mechanism commonly used in industrial control systems. \textit{Process variable} and \textit{setpoint} are two core concepts in PID control. The process variable stands for the current status of the system. The setpoint is the target for this control system to reach. The goal of PID control is to minimize the error between process variable and setpoint by adjusting some control variable. The controller output $u(t)$ is defined as follows:
 \begin{equation}
 \label{eq:pid-output}
 u(t) = {K_p} \cdot e(t) + {K_i} \cdot \int_0^t {e(\tau )d\tau }  + {K_d} \cdot \frac{d}{{dt}}e(t) \: ,
 \end{equation}
-where $e(t)$ represents the error between process variable and setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters representing the proportional gain, integral gain and derivative gain respectively. Proportional part directly relates to the change of the process variable, and is also the main factor to adjust the process variable towards setpoint. There might be oscillations and steady-state errors in a pure proportional system, and they can be reduced or eliminated by adding the integral part. The appearance of derivative part is to predict future errors, so that the system tends to become steady early and quickly. The result of (\ref{eq:pid-output}) is used to manipulate the system input of next moment to adjust process variable towards setpoint.
+where $e(t)$ represents the error between process variable and setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters representing the proportional gain, integral gain and derivative gain, respectively. The result of (\ref{eq:pid-output}) is used for manipulating the system to make process variable change towards setpoint.
 
-As an effective and flexible control technique, PID control has been used to solve all kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms by many papers. For instance, in \cite{Wong04} a PID-based real time rate control scheme is proposed to trade-off between spatial and temporal quality and smooth the video quality between frames; in \cite{Yang10}, the authors designed an incremental rate control algorithm for H.264/SVC, in which the PID method is used to provide robust buffer control for each layer. We also notice that some researchers have proposed theoretical model or middle-ware framework for QoS adaptation \cite{Li98}\cite{Li99}, with PID as the basic control concept. However, we have not found any paper that integrates PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. That inspires us to design a PID-based quality control algorithm and utilize it to deliver best video quality with least quality fluctuation.
+As an effective and flexible control technique, PID control has been used to solve all kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms (rate control of video coding is mainly to adjust the encoding parameters for every frame, so that the bits are appropriately allocated to avoid buffer overflow and achieve desired bitrate) \cite{Wong04}\cite{Yang10}. We also notice that some researchers have proposed theoretical model or middle-ware framework for QoS adaptation \cite{Li98}\cite{Li99}, with PID as the basic control scheme. However, we have not found any paper that integrates PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. That inspires us to design a PID-based quality control algorithm and utilize it to deliver better video quality to the user.
 
 In this section, we first introduce the \textit{quality level} concept to discretization the bitrate and quality of scalable video. Then we define the process variable used in our PID-based quality control algorithm. After that, the algorithm is formulated and explained in detail, followed by the brief discussion of parameter selection.
 
