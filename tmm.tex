@@ -304,10 +304,9 @@ As we can see, in its nature SVC bitstream extraction is a combinatorial optimiz
 
 For a typical ``0-1 Knapsack Problem", the optimal solution can generally be found using the dynamic programming algorithm. However, this is not operational for the bitstream extraction problem, mainly due to the dependence between the data packets. First, the subset of packets to be extracted cannot be chosen arbitrarily, since if a packet is included, all the packets it depends on must also be included. For example, in Fig. \ref{fig:Bitstream-Extraction}, we cannot include the Q2 packet of a frame without including the Q1 packet of the same frame. Second, the value of a packet is not obvious and certain, since a packet's contribution to video quality depends on other packets and may vary in different extractions. There is no way to exactly tell the video quality of an extracted sub-stream, unless we perform the extraction and calculate the distortion for real. In fact, to the best of our knowledge, no method presented in the literature claims to find the optimal solution of the SVC bitstream extraction problem. All the effort is made to obtain a solution that is as good as possible.
 
-In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is a training-based model, more computation is needed to get robust model parameters. 
-With relatively simple distortion estimation, Yang et al. \cite{Yang13} proposed a method based-on simulated annealing to determine priority values used in bitstream extraction. Ramanathan et al. \cite{Ramanathan12} proposed their concept and calculation method of the ``Quality Metadata'' to signal and use in bitstream extraction. In both methods, the accuracy of distortion estimation still affects the performance a lot.
+In \cite{Amonou07}, Amonou et al. proposed a bitstream extraction framework based on the concept of \textit{Quality Layers}. This framework has been adopted by the SVC reference software, i.e., JSVM \cite{JSVM}, and achieves better R-D performance compared with the basic extractor of JSVM. In Amonou's framework, a Quality Layer value, which reflects a data packet's R-D impact, is calculated and used for R-D optimized bitstream extraction. The process of obtaining distortion impact of every packet is extremely time consuming, and the distortion estimation accuracy can also be further improved. So other distortion/error models were proposed to either reduce the computational complexity or improve the estimation accuracy. Sun et al. \cite{Sun09} and Maani et al. \cite{Maani09} constructed models to calculate distortion based on the drift propagation between frames. Sun et al.'s method is almost as good as JSVM in regard of performance, but has much reduced complexity. Maani et al.'s model can achieve better estimation accuracy than JSVM; however, since it is a training-based model, more computation is needed to get robust model parameters. Ramanathan et al. \cite{Ramanathan12} proposed their concept and calculation method of the ``Quality Metadata'' to signal and use in bitstream extraction. Yang et al. \cite{Yang13} proposed a method based on simulated annealing to solve the bitstream extraction problem. In both methods, the accuracy of distortion estimation affects the performance a lot. With a packet's distortion impact accurately estimated, its prioritization order during extraction can be determined. Then a priority value can be assigned to it and stored in the bitstream for optimized extraction in the future. In \cite{Lim06}, Lim et al. treated SVC bitstream as a tree structure and assigned extraction priority accordingly. In \cite{Zhu11}, Zhu et al. chose to assign priority values derived using the Langrange multiplier method.
 
-In our previous work \cite{Zhang12}, we proposed a linear error model to directly estimate pixel value errors before MSE or PSNR is calculated, which achieves good performance in distortion estimation and bitstream extraction. However, this work assumes that the original video sequence is available for reference, which is not always true. How to handle the special characteristic of the no-reference case is lacking in the previous work and included in this paper.
+In our previous work \cite{Zhang12}, we proposed a linear error model for distortion estimation and priority assignment. Good bitstream extraction performance is achieved based on that. However, this work assumes that the original video sequence is available for reference, which is not always true. How to handle the special characteristic of the no-reference case is lacking in the previous work and included in this paper.
 
 \subsection{Quality Control}
 \label{subsec:analysis-control}
@@ -799,52 +798,52 @@ Since the next generation video coding standard High Efficiency Video Coding (HE
 \begin{thebibliography}{1}
 
 \bibitem{Gualdi08}
-G. Gualdi, A. Prati, and R. Cucchiara, ``Video Streaming for Mobile Video Surveillance'', in {\em IEEE Transactions on Multimedia}, vol. 10, no. 6, pp. 1142-1154, 2008.
+G. Gualdi, A. Prati, and R. Cucchiara, ``Video Streaming for Mobile Video Surveillance'', {\em IEEE Transactions on Multimedia}, vol. 10, no. 6, pp. 1142-1154, 2008.
 
 \bibitem{Chen13}
-Y. Chen, B. Zhang, Y. Liu, and W. Zhu, ``Measurement and Modeling of Video Watching Time in a Large-Scale Internet Video-on-Demand System'', in {\em IEEE Transactions on Multimedia}, vol. 15, no. 8, pp. 2087-2098, 2013.
+Y. Chen, B. Zhang, Y. Liu, and W. Zhu, ``Measurement and Modeling of Video Watching Time in a Large-Scale Internet Video-on-Demand System'', {\em IEEE Transactions on Multimedia}, vol. 15, no. 8, pp. 2087-2098, 2013.
 
 \bibitem{Egilmez14}
-H. E. Egilmez and A. M. Tekalp, ``Distributed QoS architectures for multimedia streaming over software defined networks'', in {\em IEEE Transactions on Multimedia}, vol. 16, no. 6, pp. 1597-1609, 2014.
+H. E. Egilmez and A. M. Tekalp, ``Distributed QoS architectures for multimedia streaming over software defined networks'', {\em IEEE Transactions on Multimedia}, vol. 16, no. 6, pp. 1597-1609, 2014.
 
 \bibitem{Li14}
-S. Li et al., ``Flexible Traffic Engineering (F-TE): When OpenFlow Meets Multi-Protocol IP-Forwarding'', in {\em IEEE Communication Letters}, vol. 18, pp. 1699-1702, Oct. 2014.
+S. Li et al., ``Flexible Traffic Engineering (F-TE): When OpenFlow Meets Multi-Protocol IP-Forwarding'', {\em IEEE Communication Letters}, vol. 18, pp. 1699-1702, Oct. 2014.
 
 \bibitem{Xue15}
-N. Xue et al., ``Demonstration of OpenFlow-Controlled Network Orchestration for Adaptive SVC Video Manycast'', in {\em IEEE Transactions on Multimedia}, vol. 17, pp. 1617-1629, Sept. 2015.
+N. Xue et al., ``Demonstration of OpenFlow-Controlled Network Orchestration for Adaptive SVC Video Manycast'', {\em IEEE Transactions on Multimedia}, vol. 17, pp. 1617-1629, Sept. 2015.
 
 \bibitem{DASH}
-T. Stockhammer, ``Dynamic adaptive streaming over HTTP: standards and design principles", in {\em Proceedings of the second annual ACM conference on Multimedia systems}, 2011.
+T. Stockhammer, ``Dynamic adaptive streaming over HTTP: standards and design principles'', {\em Proceedings of the second annual ACM conference on Multimedia systems}, 2011.
 
 \bibitem{SVC}
 T.~Wiegand, G.~Sullivan, J.~Reichel, H.~Schwarz, M.~Wien, eds., ``Joint Draft ITU-T Rec. H.264|ISO/IEC 14496-10/Amd.3 Scalable Video Coding'', Joint Video Team, Doc. JVT-X201 Jul. 2007.
 
 \bibitem{SVCOverview}
-H.~Schwarz, D.~Marpe, and T.~Wiegand, ``Overview of the scalable video coding extension of the H.264/AVC standard'', in {\em IEEE Trans. Circuits. Syst. Video Technol.}, vol. 17, no. 9, pp. 1103-1120, 2007.
+H.~Schwarz, D.~Marpe, and T.~Wiegand, ``Overview of the scalable video coding extension of the H.264/AVC standard'', {\em IEEE Trans. Circuits. Syst. Video Technol.}, vol. 17, no. 9, pp. 1103-1120, 2007.
 
 \bibitem{Bouten14}
-N. Bouten, S. Latre, J. Famaey, W. V. Leekwijck, and F. D. Turck, ``In-Network Quality Optimization for Adaptive Video Streaming Services'', in {\em IEEE Transactions on Multimedia}, vol. 16, no. 8, pp. 2281-2293, 2014.
+N. Bouten, S. Latre, J. Famaey, W. V. Leekwijck, and F. D. Turck, ``In-Network Quality Optimization for Adaptive Video Streaming Services'', {\em IEEE Transactions on Multimedia}, vol. 16, no. 8, pp. 2281-2293, 2014.
 
 \bibitem{YouTube}
 https://www.youtube.com/
 
 \bibitem{SVCPerformance}
-M. Wien , H. Schwarz and T. Oelbaum,  ``Performance Analysis of SVC'',  in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp. 1194-1203, 2007.
+M. Wien , H. Schwarz and T. Oelbaum,  ``Performance Analysis of SVC'', {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp. 1194-1203, 2007.
 
 \bibitem{Chuah12}
-S. Chuah, Z. Chen, and Y. Tan, ``Energy-Efficient Resource Allocation and Scheduling for Multicast of Scalable Video Over Wireless Networks'', in {\em IEEE Transactions on Multimedia}, vol. 14, no. 4, pp. 1324-1336, 2012.
+S. Chuah, Z. Chen, and Y. Tan, ``Energy-Efficient Resource Allocation and Scheduling for Multicast of Scalable Video Over Wireless Networks'', {\em IEEE Transactions on Multimedia}, vol. 14, no. 4, pp. 1324-1336, 2012.
 
 \bibitem{Zhu13}
-Z. Zhu, S. Li, and X. Chen, ``Design QoS-aware multi-path provisioning strategies for efficient cloud-assisted SVC video streaming to heterogeneous clients'', in {\em IEEE Transactions on Multimedia}, vol. 15, no. 4, pp. 758-768, 2013.
+Z. Zhu, S. Li, and X. Chen, ``Design QoS-aware multi-path provisioning strategies for efficient cloud-assisted SVC video streaming to heterogeneous clients'', {\em IEEE Transactions on Multimedia}, vol. 15, no. 4, pp. 758-768, 2013.
 
 \bibitem{Dan13}
-G. Dan, O. Hadar, R. Ohayon, and N. Amram, ``Live video streaming with adaptive pre-processing by using scalable video coding'', in {\em Proceedings of IEEE International Conference on Consumer Electronics (ICCE)}, pp. 588-589, 2013.
+G. Dan, O. Hadar, R. Ohayon, and N. Amram, ``Live video streaming with adaptive pre-processing by using scalable video coding'', {\em Proceedings of IEEE International Conference on Consumer Electronics (ICCE)}, pp. 588-589, 2013.
 
 \bibitem{Yang14}
-E. Yang, Y. Ran, S. Chen, and J. Yang, ``A multicast architecture of SVC streaming over OpenFlow networks'', in {\em Proceedings of IEEE Global Communications Conference (GLOBECOM)}, pp. 1323-1328, 2014.
+E. Yang, Y. Ran, S. Chen, and J. Yang, ``A multicast architecture of SVC streaming over OpenFlow networks'', {\em Proceedings of IEEE Global Communications Conference (GLOBECOM)}, pp. 1323-1328, 2014.
 
 \bibitem{Cicalo14}
-S. Cicalo, and V. Tralli, ``Distortion-Fair Cross-Layer Resource Allocation for Scalable Video Transmission in OFDMA Wireless Networks'', in {\em IEEE Transactions on Multimedia}, vol. 16, no. 3, pp. 848-863, 2014.
+S. Cicalo, and V. Tralli, ``Distortion-Fair Cross-Layer Resource Allocation for Scalable Video Transmission in OFDMA Wireless Networks'', {\em IEEE Transactions on Multimedia}, vol. 16, no. 3, pp. 848-863, 2014.
 
 \bibitem{DSS}
 http://dss.macosforge.org/
@@ -853,37 +852,44 @@ http://dss.macosforge.org/
 http://en.wikipedia.org/wiki/Knapsack\_problem
 
 \bibitem{Amonou07}
-I.~Amonou, N.~Cammas, S.~Kervadec, S.~Pateux, ``Optimized Rate-distortion Extraction with Quality Layers in the Scalable Extension of H.264/AVC'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp. 1186-1193, 2007.
+I.~Amonou, N.~Cammas, S.~Kervadec, S.~Pateux, ``Optimized Rate-distortion Extraction with Quality Layers in the Scalable Extension of H.264/AVC'', {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 17, no. 9, pp. 1186-1193, 2007.
 
 \bibitem{JSVM}
 Text of ISO/IEC 14496-4:2001/PDAM 19 Reference Software for SVC, Joint Video Team (JVT) of ISO-IEC MPEG \& ITU-T VCEG, N9195, Sep. 2007.
 
 \bibitem{Sun09}
-J.~Sun, W.~Gao, D.~Zhao, W.~Li, ``On Rate-distortion Modeling and Extraction of H.264/SVC Fine-Granular Scalable Video'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~19, no.~3, pp.~323-336, Mar. 2009.
+J.~Sun, W.~Gao, D.~Zhao, W.~Li, ``On Rate-distortion Modeling and Extraction of H.264/SVC Fine-Granular Scalable Video'', {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~19, no.~3, pp.~323-336, Mar. 2009.
 
 \bibitem{Maani09}
-E.~Maani, A.~K. Katsaggelos, ``Optimized Bit Extraction Using Distortion Modeling in the Scalable Extension of H.264/AVC'' in {\em IEEE Trans. Image Processing}, vol.~18, no.~9, pp.~2022-2029, 2009.
+E.~Maani, A.~K. Katsaggelos, ``Optimized Bit Extraction Using Distortion Modeling in the Scalable Extension of H.264/AVC'', {\em IEEE Trans. Image Processing}, vol.~18, no.~9, pp.~2022-2029, 2009.
 
 \bibitem{Ramanathan12}
-P.~Ramanathan and N.~Jayant. ``RD optimized bitstream extraction for H. 264/SVC based video streaming'' In {\em Proceedings of IEEE International Conference on Image Processing}, pp. 2241-2244, 2012.
+P.~Ramanathan and N.~Jayant. ``RD optimized bitstream extraction for H. 264/SVC based video streaming'', {\em Proceedings of IEEE International Conference on Image Processing}, pp. 2241-2244, 2012.
 
 \bibitem{Yang13}
-K.~Yang, S.~Wan, Y.~Gong, and Y.~Feng. ``A fast algorithm of bitstream extraction using distortion prediction based on simulated annealing'' In {\em Journal of Visual Communication and Image Representation}, no.7, pp. 752-759, 2013.
+K.~Yang, S.~Wan, Y.~Gong, and Y.~Feng. ``A fast algorithm of bitstream extraction using distortion prediction based on simulated annealing'', {\em Journal of Visual Communication and Image Representation}, no.7, pp. 752-759, 2013.
+
+\bibitem{Lim06}
+J. Lim, M. Kin, and S. Hahm, ``An optimization-theoretic approach to optimal extraction of SVC Bitstreams'', ITU-T VCEG
+JVT-U081, October 2006.
+
+\bibitem{Zhu11}
+T. Zhu and X. Zhang, ``Frame distortion estimation and its application to extraction priority assignment for MGS of H. 264/SVC'', {\em Przegląd Elektrotechniczny}, vol. 87, no. 1, pp. 284-289, 2011.
 
 \bibitem{Zhang12}
-W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model,'' {\em Proceedings of IEEE International Symposium on Circuits and Systems}, pp.~1887-1890, Seoul, Korea, May 2012.
+W.~Zhang, J.~Sun, J.~Liu and Z.~Guo, ``Optimized bit extraction of SVC exploiting linear error model'', {\em Proceedings of IEEE International Symposium on Circuits and Systems}, pp.~1887-1890, Seoul, Korea, May 2012.
 
 \bibitem{Gao06}
-K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', in {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
+K. Gao, J. Zhai, J. Li and C. Wang, ``Real-Time scheduling for scalable video coding streaming system'', {\em IEEE Sarnoff Symposium}, Princeton, NJ, pp. 1-4, Mar. 2006.
 
 \bibitem{Schierl10}
-Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', in {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
+Y. Schierl, R. Sanchez, C. Globisch, Hellge, and T. Wiegand, ``Priority-based media delivery using SVC with RTP and HTTP streaming'', {\em Multimedia Tools And Applications}, vol. 55, no. 2, pp. 227-246, Sep. 2010.
 
 \bibitem{Winken08}
-M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'' in {\em Proceedings of IEEE International Conference on Image Processing}, 2008.
+M.~Winken, H.~Schwarz, T.~Wiegand, ``Joint Rate-distortion Optimization of Transform Coefficients for Spatial Scalable Video Coding Using SVC'', {\em Proceedings of IEEE International Conference on Image Processing}, 2008.
 
 \bibitem{H264Overview}
-T.~Wiegand, G.~J. Sullivan, G.~Bj$\o$ntegaard, A.~Luthra, ``Overview of the H.264/AVC Video Coding Standard'', in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 13, no. 7, pp.~560--576, Jul. 2003.
+T.~Wiegand, G.~J. Sullivan, G.~Bj$\o$ntegaard, A.~Luthra, ``Overview of the H.264/AVC Video Coding Standard'', {\em IEEE Trans. Circuits Syst. Video Technol.}, vol. 13, no. 7, pp.~560--576, Jul. 2003.
 
 \bibitem{GreedyAlgo}
 P.~E.~Black, ``Greedy Algorithm'' in {\em Dictionary of Algorithms and Data Structures} [online], U.S. National Institute of Standards and Technology, Feb. 2005.
@@ -896,25 +902,25 @@ http://en.wikipedia.org/wiki/PID\_controller
 K. J. Astrom, Control System Design, pp 216-219, 2002.
 
 \bibitem{Wong04}
-C.W.Wong, O.C.Au and H.K.Lam, ``PID-based real-time rate control'', in {\em Proceedings of IEEE International Conference on Multimedia and Expo}, 1: 221-224, 2004.
+C.W.Wong, O.C.Au and H.K.Lam, ``PID-based real-time rate control'', {\em Proceedings of IEEE International Conference on Multimedia and Expo}, 1: 221-224, 2004.
 
 \bibitem{Yang10}
-J. Yang, Y. Sun, Y. Zhou, S. Sun, ``Incremental rate control for H.264 scalable video coding'', in {\em IEEE Global Telecommunications Conference}, Miami, Florida, Dec. 2010.
+J. Yang, Y. Sun, Y. Zhou, S. Sun, ``Incremental rate control for H.264 scalable video coding'', {\em IEEE Global Telecommunications Conference}, Miami, Florida, Dec. 2010.
 
 \bibitem{Li98}
-B. Li and K. Nahrstedt  ``A control theoretical model for quality of service adaptations'', in {\em Proceedings of Sixth International Workshop on Quality of Service}, 1998.
+B. Li and K. Nahrstedt  ``A control theoretical model for quality of service adaptations'', {\em Proceedings of Sixth International Workshop on Quality of Service}, 1998.
 
 \bibitem{Li99}
-B. Li and K. Nahrstedt, ``A control-sased middleware framework for Quality-of-Service adaptations'', in {\em IEEE J. Selected Areas in Comm.}, vol. 17, no. 9, pp. 1632-1650, Sept. 1999.
+B. Li and K. Nahrstedt, ``A control-sased middleware framework for Quality-of-Service adaptations'', {\em IEEE J. Selected Areas in Comm.}, vol. 17, no. 9, pp. 1632-1650, Sept. 1999.
 
 \bibitem{Ziegler42}
-J. B. Ziegler and N. B. Nichols, ``Optimum settings for automatic controllers'', in {\em ASME Trans.}, pp. 759-768, 1942.
+J. B. Ziegler and N. B. Nichols, ``Optimum settings for automatic controllers'', {\em ASME Trans.}, pp. 759-768, 1942.
 
 \bibitem{Netlimiter}
 NetLimiter: http://www.netlimiter.com/
 
 \bibitem{HEVC}
-G.~J.~Sullivan, J.-R.~Ohm, W.-J.~Han, and T.~Wiegand, ``Overview of the High Efficiency Video Coding (HEVC) standard'' in {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~22, no.~12, pp.~1648-1667, Dec. 2012. 
+G.~J.~Sullivan, J.-R.~Ohm, W.-J.~Han, and T.~Wiegand, ``Overview of the High Efficiency Video Coding (HEVC) standard'', {\em IEEE Trans. Circuits Syst. Video Technol.}, vol.~22, no.~12, pp.~1648-1667, Dec. 2012. 
 
 \end{thebibliography}
 
