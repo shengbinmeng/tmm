@@ -295,7 +295,7 @@ Bitstream extraction is the operation of choosing a subset of data packets from 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 1.0\linewidth]{Bitstream-Extraction.jpg}
+\includegraphics[width = 0.9\linewidth]{Bitstream-Extraction.jpg}
 \caption{Bitstream extraction of SVC \label{fig:Bitstream-Extraction}}
 \end{figure}
 
@@ -381,7 +381,7 @@ It would need too many decoding times to get the error vectors of all enhancemen
  
 \begin{figure}[h]
 \centering
-\includegraphics[width = 1.0\linewidth]{GOP-Structure.png}
+\includegraphics[width = 0.9\linewidth]{GOP-Structure.png}
 \caption{Group of pictures (GOP) in SVC \label{fig:GOP_Structure}}
 \end{figure}
  
@@ -403,7 +403,7 @@ Before using the estimation based on LEM, we conduct an experiment to verify it.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width = 1.0\linewidth]{ModelVerification.png}
+\includegraphics[width = 0.9\linewidth]{ModelVerification.png}
 \caption{Comparison of actual and estimated distortion for sequence {\em Foreman} \label{fig:model_verification}}
 \end{figure}
 
@@ -603,17 +603,17 @@ Among other bitstream extraction methods besides that of JSVM, the work in \cite
 \begin{figure*}[t]
 \centering
 \subfloat[City]{
-\includegraphics[width=0.5\textwidth]{City.jpg}
+\includegraphics[width=0.45\textwidth]{City.jpg}
 \label{fig:City}}
 \subfloat[Foreman]{
-\includegraphics[width=0.5\textwidth]{Foreman.jpg}
+\includegraphics[width=0.45\textwidth]{Foreman.jpg}
 \label{fig:Foreman}}
 \qquad
 \subfloat[Harbour]{
-\includegraphics[width=0.5\textwidth]{Harbour.jpg}
+\includegraphics[width=0.45\textwidth]{Harbour.jpg}
 \label{fig:Harbour}}
 \subfloat[Soccer]{
-\includegraphics[width=0.5\textwidth]{Soccer.jpg}
+\includegraphics[width=0.45\textwidth]{Soccer.jpg}
 \label{fig:Soccer}}
 \caption{Performance of three bitstream extraction methods for various CIF sequences}
 \label{fig:extraction-performance}
@@ -676,11 +676,12 @@ First of all, we conduct some preliminary improvement experiments using only pro
 Since STP and LTP have their own limitations, we implement the complete PID-based quality control algorithm, which can both reduce quality variance and improve average quality level. From the result shown in Fig. \ref{fig:performance-two}, we can conclude that when integrated with integral part and derivative part, the effect of proportional part is not as aggressive as in STP. An obvious proof can be found in Fig. \ref{fig:variance-two}, which clearly shows that the proposed PID quality control algorithm keeps a lower quality variance compared to PDF algorithm. Table \ref{tab:improvement} lists the statistical experimental results for these four quality control algorithms, in which PID-based control algorithm has shown its advantage over the others, especially in reducing the quality fluctuation. It can be seen that, compared to PDF, the PID-based quality control algorithm improves 8.6\% in video quality with 24.8\% reduction in quality fluctuation. The video quality fluctuation of the four control algorithms, when available bandwidth fluctuates around 800 kbps, is shown in Fig. \ref{fig:fluctuation}, from which we can see a more stable video quality in the proposed PID quality control algorithm.
 
 \begin{figure*}[t]
+\centering
 \subfloat[Average quality level of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{Quality-all.png}
+\includegraphics[width=0.45\textwidth]{Quality-all.png}
 \label{fig:quality-all}}
 \subfloat[Quality level variance of different control algorithms]{
-\includegraphics[width=0.5\textwidth]{Variance-all.png}
+\includegraphics[width=0.45\textwidth]{Variance-all.png}
 \label{fig:variance-all}}
 \caption{Comparison of the long/short time prediction and the PDF algorithm in DSS}
 \label{fig:performance-all}
@@ -689,10 +690,10 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{Quality-two.png}
+\includegraphics[width=0.45\textwidth]{Quality-two.png}
 \label{fig:quality-two}}
 \subfloat[Quality level variance of PID and PDF control algorithms]{
-\includegraphics[width=0.5\textwidth]{Variance-two.png}
+\includegraphics[width=0.45\textwidth]{Variance-two.png}
 \label{fig:variance-two}}
 \caption{Comparison of the proposed PID algorithm and the PDF algorithm in DDS}
 \label{fig:performance-two}
@@ -728,17 +729,17 @@ After combining the two algorithms together, the proposed adaptive streaming sys
 \begin{figure*}[t]
 \centering
 \subfloat[Bandwidth fluctuates around 400kbps: PSNR average and variance in the original system are 36.00 and 0.30, while in the proposed system are 36.50 (increased by 0.50) and 0.23 (reduced by 0.07).]{
-\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR1.png}
+\includegraphics[width=0.45\textwidth]{Fluctuation-PSNR1.png}
 \label{fig:Fluctuation-PSNR1}}\hfill
 \subfloat[Bandwidth fluctuates around 600kbps: PSNR average and variance in the original system are 37.06 and 0.61, while in the proposed system are 37.32 (increased by 0.26) and 0.33 (reduced by 0.28).]{
-\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR2.png}
+\includegraphics[width=0.45\textwidth]{Fluctuation-PSNR2.png}
 \label{fig:Fluctuation-PSNR2}}
 \qquad
 \subfloat[Bandwidth fluctuates around 800kbps: PSNR average and variance in the original system are 37.92 and 1.24, while in the proposed system are 38.75 (increased by 0.83) and 0.69 (reduced by 0.55).]{
-\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR3.png}
+\includegraphics[width=0.45\textwidth]{Fluctuation-PSNR3.png}
 \label{fig:Fluctuation-PSNR3}}\hfill
 \subfloat[Bandwidth fluctuates around 1000kbps: PSNR average and variance in the original system are 38.28 and 1.30, while in the proposed system are 38.94 (increased by 0.66) and 0.71 (reduced by 0.59).]{
-\includegraphics[width=0.47\textwidth]{Fluctuation-PSNR4.png}
+\includegraphics[width=0.45\textwidth]{Fluctuation-PSNR4.png}
 \label{fig:Fluctuation-PSNR4}}
 \caption{The streamed video's PSNR change with time when bandwidth fluctuates
 \label{fig:fluctuation-psnr}}
