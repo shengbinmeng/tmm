@@ -1,0 +1,188 @@
+Response to the reviewer comments of Paper MM-006412: Adaptive Video Streaming with Optimized Bitstream Extraction and PID-based Quality Control by Shengbin Meng, Jun Sun, Yizhou Duan and Zongming Guo.
+
+We would like to thank the reviewers for their time and efforts to read our manuscript and provide valuable suggestions to improve this work. We have read the comments carefully, and tried to follow the suggestions as closely as possible. We have also proof-read and polished the paper to ensure correctness and readability as much as we can.
+
+Reviewer: 1
+
+In this paper, the authors considered how to achieve adaptive SVC video streaming with bitstream extraction and PID-based quality control. The idea is somewhat interesting and the proposed scheme has been correctly implemented in a software system. The logic flow of the paper is good and proposed algorithms look good. However, the manuscript still bears some flaws, which should be addressed before being accepted by TMM.
+
+1. The authors proposed a system for bitstream extraction and PID-based quality control for adaptive SVC streaming. Basically, they consider the scheme in which the end-to-end network bandwidth can be correctly measured/estimated at the streaming source and then the source applies the proposed algorithms to send video packets adaptively according to the bandwidth estimation. This scenario is generally correct, but a few assumptions should be clarified. First of all, in the video streaming network, how to estimate or measure the end-to-end bandwidth precisely? If the measurements are not precise, how about the resulting performance degradation? Secondly, the authors somehow assumed that there would be no unexpected packet loss in the video streaming network, as long as the streaming bandwidth is chosen correctly. However, this is not true in a practical network. I would expect they provide some analysis on what will be the impact of packet loss? Even though the video packets are correctly selected to be transferred, they can be lost in the network, right? Will this cause a significant performance issue or can the effect from packet loss be compensated?
+
+Response:
+
+In the proposed quality control algorithm, we estimate the bandwidth change using a value called “actual_check interval ratio”, as explained in Section IV-B. The algorithm doesn’t depend on precise measurement of the bandwidth (only estimation). Some other systems may try to measure the bandwidth by sending special “meta data” or “control packets” and waiting for feedback. However, this would add complexity to the system design, and would also cause extra round trip time. Moreover, since bandwidth condition is complex and dynamic, we believe neither measurement nor estimation can be absolutely precise. That’s why a flexible and robust mechanism like PID is needed to make quality adjustment decisions based on not-so-precise estimation.
+
+Packet loss, as you point out, is actually not handled in this work. In practical streaming systems, occasional packet loss does happen, and will cause a significant performance issue represented by decoding errors and corrupted images. How to avoid or compensate or even recover from packet loss/error is another research topic not in scope of this paper. We have added clarifications in the revision (see last paragraph of Section II).
+
+2. Some recent progress on SDN-based video streaming should be commented in the Introduction:
+
+[1] H. Egilmez and A. Tekalp, “Distributed QoS architectures for multimedia streaming over software defined networks,” IEEE Trans. Multimedia, vol. 16, pp. 1597–1609, Oct. 2014.
+
+[2] S. Li et al., “Flexible Traffic Engineering (F-TE): When OpenFlow Meets Multi-Protocol IP-Forwarding,” IEEE Commun. Lett., vol. 18, pp. 1699-1702, Oct. 2014.
+
+[3] N. Xue et al., “Demonstration of OpenFlow-Controlled Network Orchestration for Adaptive SVC Video Manycast,” IEEE Trans. Multimedia, vol. 17, pp. 1617-1629, Sept. 2015.
+
+Response:
+
+In the revision, we have added comments on the progress of this field and its relationship with our work (see second paragraph of Section I).
+
+3. In Section III, the authors discussed the priority assignment and bitstream extraction algorithms for two scenarios, i.e., with and without references. However, the descriptions on the proposed algorithms are not very clear. I would suggest the authors to change the text descriptions to pseudo-codes and included proper explanations. Then, the procedure and complexity of the algorithms can be seen clearly. Meanwhile, I notice that the authors introduced an optimization window K in the algorithms. I would appreciate if the authors can elaborate on how to determine K and what is the impact of K’s value to the algorithms’ performance. Basically, K determines the complexity of the algorithms and I would expect that it affects the algorithms’ performance significantly too. Therefore, some simulation or experimental results should be added to comment on K’s impact.
+
+On the other hand, the authors mentioned that the proposed algorithms are greedy or heuristics. They should comment on the optimality of the solutions from the proposed algorithms. Say, if we want to minimize the distortion under certain bandwidth constraint, how much can the proposed algorithm approximate to the optimal solution? We understand that finding a global optimal solution can be too time consuming, but theoretical analysis on the approximation gap should be provided to validate the performance of their proposals.
+
+Response:
+
+In the revision, we have changed to use pseudo-codes plus explanations to better explain the algorithm in an optimization window, and discussions about impact of K and how to determine its value are also provided (see Section III-D). It is right that K affects the complexity and performance to some degree. However, as noted in the paper, the computation in priority assignment process where K is involved is actually very insignificant compared with the decoding process needed in the error vector acquisition. We have added experimental results with a larger optimization window to comment on its impact (see Section V-A).
+
+For some problems with good optimal substructure, a greedy algorithm may be proved to find the optimal solution. For the bitstream extraction problem we are not able to do that. The greedy algorithm is able to find a local optimum. However, the gap between the local optimum and the global optimum is uncertain. Unlike other well-defined combinatorial optimization problem, the bitstream extraction problem even cannot be theoretically analyzed, because, as stated in Section II-A, the data packets have dependency on each other and their contribution to video quality (distortion) cannot be calculated unless a real decoding is performed. That’s why we need to estimate the distortion caused by discarding a subset of packets. Think this way: if we can only *estimate* the result of extracting a sub-stream, it's impossible for us to tell whether it is the optimal one. Therefore, what we can do is to first make the estimation as accuracy as possible, then try to find a local optimum based on that estimation. In the revision, we have added a comment on the optimality of the solution (see first paragraph of Section III-D).
+
+4. For the PID-based quality control algorithm described in Section IV, the selection of the parameters is rather arbitrary. The authors should elaborate on how to optimize the parameters and what are the impacts of them. Meanwhile, the convergence performance of the PID-based quality control should be discussed too. For example, how fast can the algorithm achieve close-loop control? Currently, the algorithm design just follows the standard PID-based control scheme. In order to highlight the contribution of this work, the authors should try to improve the theoretical depth.
+
+Response:
+
+As with other PID control systems in the industry, the selection of the three parameters is implementation-dependent and manual tuning is usually required to achieve optimal results. In the revision we have elaborated on the impacts of each parameter. Discussions on the performance of the controller and how to optimize it are also added (see Section IV-D).
+
+5. The notations in the paper should be unified and correctly used. Currently, the usages are mixed and make the related descriptions very difficult to be understood. For instance, in Section III-A, the notations of matrices M and T are different in the equations and texts. Moreover, I would suggest the author to use M \cdot s instead of Ms to represent M * s. This should be applied to all the equations.
+
+Response:
+
+In the revision, we have changed the usage as suggested, and checked all the notations to ensure correctness as well as readability.
+
+6. In Section V, the experimental setup is not clearly explained. The authors should clearly explain where the video is injected, where the proposed algorithms are applied, how the bandwidth fluctuations are simulated, etc.
+
+Response:
+
+In the revision, we have added detailed explanations about how the system works and how the experiments are set up.
+
+7. In Section V, the results should be analyzed in a better way. For instance, in Fig. 5, we can see that the performance gain (PSNR) achieved by the proposed algorithm over the benchmarks is really marginal. I am wondering whether this is the best they can do or the performance can be further improved? Also, as the difference among the results is small, the authors should comment on the statistical accuracy of the experiments.
+
+Response:
+
+The performance can be further improved by increasing the optimization window. However, based on the results added in the revision, the improvement is very limited. As far as we know, without significantly increasing the complexity, it is difficult to achieve large PSNR gain. From the results in Fig.5 it can be seen that extraction for all bitrate points (with only one exception) in all the bitstreams are showing the superiority of our method, therefore the statistical accuracy of the experiments can be ensured.
+
+8. The quality of Figs. 2, 3, 6, and 9 needs to be improved. Currently, when printed in a black-and-white version, it would be very difficult to distinguish the curves/bars/markers in them. Also, some texts in them are too small and cannot be seen clearly.
+
+Response:
+
+All the mentioned figures are re-drawn in the revision. Colors and curve types are adjusted to make the elements easier to be distinguished even when printed in a black-and-white version, and small texts are enlarged.
+
+9. There are a few grammar errors in the paper and should be corrected. I would suggest the authors to proof-read their paper and polish it accordingly. 
+
+Response:
+
+We have proof-read the paper carefully and corrected as many errors and flaws as possible.
+
+Thank you again for the help.
+
+
+
+Reviewer: 2
+
+In this paper, the authors proposed an adaptive video streaming system based on Scalable Video Coding (SVC) extension of H.264/AVC to deal with bandwidth fluctuation and provide best online video watching experience at the same time. This paper is well organized and three main contributions are fully demonstrated: linear error model, a greedy-like algorithm of assigning priority value to each data packet, and the PID method on video quality control.
+
+1. In the first part, the authors give an introduction to the background information of this paper. Video streaming is extremely hot topic. However, the authors should strengthen more on the necessity of SVC under the fact that most of the commercial video websites adopt simulcast approach.
+
+Response:
+
+We have revised the introduction part as suggested. The necessity of SVC is analyzed explicitly in the 4th paragraph.
+
+2. In next section, related works are presented. The reviewer thinks the authors should provide related works of the priority value assigning since it’s also the main contribution of this paper. In Fig.1, the dash line has a little different part. And some little grammar flaws like “maximums” should also be corrected.
+
+Response:
+
+In the revision, related work of priority value assigning is added and the mentioned figure and grammar flaws are corrected.
+
+3. The authors present the optimized bitstream extraction by first giving the linear error model. The reviewers think the linear error model should be explained in more details. And most importantly, some more reasoning on how and why the error model is accurate should be given. The experiment environment should be demonstrated more thorough. The font size in Fig.2 should be adjusted. Little grammar flaws like the difference of “Therefore” and “Therefor” should be avoided.
+
+Response:
+
+In the revision, we have added more explanations for the linear error model and for the verification experiments as well (see Section III-A and Section III-C). Fig.2 is re-drawn with larger font size and the mentioned grammar flaws are corrected.
+
+4. In section four, a PID-based quality control algorithm is proposed. The reviewer thinks the meaning of controller output should be explained explicitly. And the difference of rate control and quality control should be strengthened. Some important aspects of PID, like stability, rising time, overshot, robustness over system parameters variation, should be discussed.
+
+Response:
+
+In the revision, more explanations on the meaning of the controller output are added (see Section IV-C). The introduction of rate control in video coding is only used to explain the widely usage of PID controller, and we have revised that part to avoid confusion (see the second paragraph of Section IV). The mentioned aspects of PID are discussed in Section IV-D along with the parameter selection.
+
+5. In the experiment section, the author gives the experiments of the proposed method. A thorough comparison is given. The reviewer thinks the authors should demonstrate how the bandwidth varies, like distribution. And for the results, the authors should give more demonstration since the reviewers don’t see a large improvement through the comparisons.
+
+Response:
+
+In the revision, we have added detailed explanations about how the system works and how the experiments are set up (including how the bandwidth is simulated). We have also provided more results to demonstrate how the performance can be improved.
+
+Thank you again for the help.
+
+
+
+Reviewer: 3
+
+1. The paper proposed an adaptive video streaming system which combines several novel algorithms for packet priority assignment and bitstream extraction, and quality-based bitrate adaptive control based on SVC. The proposed system was implemented on Apple Darwin Streaming Server (DSS) and its performance was compared with the native one in DSS. The results show that the proposed scheme achieved a better PSNR with lower quality fluctuation when compared with the baseline software.
+
+Response:
+
+We appreciate your time and the insightful comments in the following to help us improve this paper.
+
+2. One strong element of the paper is that the proposed algorithm has been implemented in DSS. As stated in the paper, ‘the system is deployed at online video website www.7dlive.com and proves to be practically effective’. Unfortunately the site is not accessible, thus the reviewer is not able to comment on the practical effectiveness of the system.
+
+Response:
+
+The website is only a demo and is hosted in a server maintained by ourselves, which may not be that stable. We have checked again and ensured that the site is functional. Please visit the site using Internet Explorer and follow the instructions on the page located at http://7dlive.com/howtouse/index.html.
+
+3. The paper has provided details on proposed algorithms on priority assignment and adaptive control. The paper is written and structured well in general.
+
+Response:
+
+Thank you for the kind words.
+
+4. The reviewer felt that there are some exaggerated statements or lack of strong evidence regarding how significant improvement the work has been achieved in terms of user-perceived video quality.
+
+For example, page 8, col 2, regarding performance comparison between the proposed method and JSVM, it is stated that “For each sequence, the maximum and average PSNR gain through all 10 bitrate points are calculated and listed in Table II, which shows that our extraction method can achieve a significant performance gain compared with JSVM.” However, if we look at Table II, the average PSNR gain is only about 0.05 dB for half of video clips and about 0.11 dB for the remaining half of video clips (compared with JSVM QL). Can we say that this performance gain is SIGNIFICENT? Are we able to differentiate them from perceived quality point of view?
+
+Page 2, 1st column, “Then novel algorithms for bitstream extraction and quality control are designed and implemented to achieve significant improvement in terms of user-perceived video quality.” Same comment here. The paper/work is only based on PSNR and it is well-known that PSNR has poor match with user perceived quality. Even from PSNR point of view, how significant of the performance gain is?
+
+Response:
+
+For the PSNR comparison we have realized that some statements were indeed exaggerated and have changed them to appropriately reflect the actual achievement. Besides the PSNR increase, our work (more specifically, the PID-based quality control algorithm) also reduces the quality fluctuation of the video, which in another aspect improves the user’s watching experience. In the revision, we have rephrased the contribution of this work to clearly state the achievements without misleading. For example, by “user-perceived video quality” we actually intended to mean “the quality of the video delivered to the user”, still in PSNR rather than the subjective criterion. This misleading expression is avoided.
+
+5. In Figure 5, PSNR results are in the range of 32 to 38 dB (in general, MOS score between 4 and 5), whereas in Figure 9, PSNR results are all above 38.5 (MOS score over 5). More explanations are required on why PSNR are in such differences for these experiments. In Figure 9, when PSNR results are all over 38.5, are you able to perceive the difference of quality fluctuation between the proposed system and the reference one? I would suggest some subjective tests to be carried out to prove that the proposed system is better than the reference one from the perceived quality point of view.
+
+Response:
+
+Larger PSNR values in Figure 9 are due to the relatively higher bitrates used in encoding. We have realized that it's not proper to encode the 352x288 video clip Foreman, which has quite simple scenes, with a bitrate of 800kbps or higher. In that case, PSNR values would indeed be too large. Instead, we have changed to use the video clip Soccer, which has more complex scenes, and some lower bitrates in the experiments for the combined system, such that PSNR values fall in a reasonable range. Please see the new results in the revised paper.
+
+As for subjective test (obtaining MOS data), to be honest we did not have any experience on that before, and during the short time for this revision we would not be able to credibly follow this useful suggestion. In the revised paper, we have added a description of future work, which includes carrying out subjective test (see the last paragraph of Section VI).
+
+6. Page 8, col 1, regarding adaptation approach, “in this algorithm, it is not necessary to change one quality level at a time. This enables fast quality drop when bandwidth suddenly decreases and fast quality rise when system starts, resulting in a seamless experience.” I don’t know what kinds of seamless experience the authors refer to. More explanations are required here. In general for video bitrate adaptation, sudden bit rate change will cause unpleasant user experience. That is why many adaptation algorithms choose to increase/decrease bitrate gradually, instead of a sudden change in bitrate.
+
+Response:
+
+If bandwidth suddenly decreases, fast quality drop may be helpful to avoid playback pause. When system starts, fast quality rise can provide high quality video as soon as possible. By seamless experience we mean that the user can enjoy the video without stopping or waiting. We think there are some special cases where a sudden change is benefiting and our algorithm has the potential to handle them. Of course, most of the time the adaptation algorithms should aim at a smooth quality, which is also one target of the proposed PID-based quality control. In the revision, we have added explanations here (see the last paragraph of Section IV-C).
+
+7. It is not very clear how eight video quality levels are defined. Do they match to fixed video bitrates? The paper mentioned that a maximum bitrate of 1587 kbps at level 8. Is it just fixed for this particular experiment? How about video bitrate higher than the set value, or a video clip’s bitrate in different range? More explanations are required to make it clear.
+
+Response:
+
+As stated in Section IV-A, quality level is a concept to quantize the continuous video quality. The number of quality levels and how they are mapped to different bitrates are both implementation-dependent. Generally, the highest quality level corresponds to the highest bitrate available. In the case of SVC, that is the bitrate of the whole stream. Therefore, here “a maximum bitrate of 1587 kbps at level 8” means that the bitrate of the whole SVC video stream is 1587 kbps, which is mapped to the highest quality level 8. This is indeed only the case for this particular experiment, where the quality levels are simply constructed with the SVC enhancement layers. We have added more explanations to clarify the meaning of quality levels and how they are defined in our experiments (see the first paragraph of Section V-B).
+
+8. In Table IV, the performance comparison between the proposed PID and baseline PDF, I would suggest add columns for average quality improvement in PSNR (dB) and quality variance of PSNR (dB), in addition to current average quality level and quality variance. It is difficult to judge the performance gain without a full understanding of the eight quality levels.
+
+Response:
+
+With the concept of quality levels explained more clearly in the revision, it should now be easy to understand that: a higher quality level is by definition corresponding to a higher bitrate, which without doubt will result in a higher PSNR, and vice versa. The quality control algorithm only concerns adjustment of the quality level (i.e., the adaptation of bitrate), and PSNR does not come into play until specific bitstream extraction is performed (the performance of bitstream extraction algorithm also affects the PSNR values). Therefore, we consider it’s better to present the comparison of PSNR in the following part of experiments for the combined system.
+
+9. There are some typos/grammar errors in the paper. For example:
+
+a. Page 1, 1st col, video streaming has also attracted a large number of users and become an increasingly … => becomes
+
+b. Page 2, 2nd col, Problem Analysis and Related Works => Related Work
+
+c. Page 2, 2nd col, this problem in the form of “0-1 Kanpsack Problem”. => this problem lies (or fits) in the form …
+
+d. Page 3, 2nd col, The state-of-art solutions => The state-of-the-art solutions
+
+Response:
+
+All of these are fixed in the revision. We have proof-read the paper and corrected some other errors as well.
+
+Thank you again for the help.
+
