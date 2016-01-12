@@ -1,0 +1,45 @@
+Response to the reviewer comments of Paper MM-006412-R1: Adaptive Video Streaming with Optimized Bitstream Extraction and PID-based Quality Control by Shengbin Meng, Jun Sun, Yizhou Duan and Zongming Guo.
+
+We would like to thank the reviewers for their help to make this paper better. We would also like to thank the associate editor for coordinating the review process. We have read the reviewer comments carefully, and tried to follow the suggestions as closely as possible. In this revision, we have also used a professional editing service to help refine and polish this paper regarding English usage.
+
+Reviewer: 1
+
+The reviewer is happy with the revised version of the paper and the authors¡¯ response to the reviewer¡¯s comments. The reviewer would recommend the paper to be accepted with minor corrections as listed below.
+
+1. The reviewer is still not able to access the website (www.7dlive.com) which was mentioned in the abstract of the paper. The reviewer would suggest the authors double check the website¡¯s stability and accessibility. If the work¡¯s practical effectiveness (the suggested website to demo the proposed adaptive video streaming system) could not be checked or verified by others, the reviewer would suggest the authors remove this part of claim in the abstract and/or in the body of the paper.
+
+Response:
+
+In this revision, we have followed the suggestion and removed the claims about the website from this paper.
+
+2. Typos, e.g. Table II, caption, the proposed algorith => algorithm
+
+In future submission for a revised paper, it would be better if the authors can mark out the part of contents which are updated/added in response to reviewers¡¯ comments.
+
+Response:
+
+We have used a professional editing service to polish the language of this paper so that grammar flaws and typos (including the mentioned one) are corrected.
+
+This revision includes many small updates about language usage as a result of the editing service, so it may be not appropriate to mark them in this response. We will follow your suggestion in future submission for a revised paper.
+
+Thank you very much.
+
+
+Reviewer: 2
+
+The authors have successfully addressed all the comments I raised previously. I appreciate their efforts on the revision, and do not have any further comments.
+
+Response:
+
+Thank you very much.
+
+
+Reviewer: 3
+
+The authors have modified most of the parts mentioned in the first review. And the demonstration is satisfactory. The authors still need to discuss more on the robustness of the PID controller. Since the bandwidth fluctuation in the simulation is from 400kbps to 1400kbps, which is quite limited, the influence of large variance is not clear. The authors may need to do simulation on larger variance.
+
+Response:
+
+The values (400kbps, 1400kbps, etc.) in our simulation are average/mean values around which the bandwidth fluctuates, rather than the lower or upper bounds. The actual bandwidth can reach a value lower than 400kbps or higher than 1400kbps during the fluctuation. Therefore, the covered bandwidth range is actually larger than [400, 1400]. Robustness and performance of the proposed algorithm are verified in this range. More simulations/experiments can be performed to check the extreme cases in the future work. In this revision, we have added clarifications about the bandwidth fluctuation range (see second paragraph of Section V-B), and more discussion on the robustness of the PID controller (see last paragraph of Section IV-D).
+
+Thank you very much.
