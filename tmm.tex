@@ -673,8 +673,6 @@ We simulate the bandwidth fluctuation by adjusting the bandwidth around a certai
 
 We first conduct some preliminary improvement experiments using only the proportional part or integral part of the PID model. Because the two parts are related to the current short-term error and the accumulated long-term error, we call them Short-Term Prediction (STP) and Long-Term Prediction (LTP), respectively. Fig. \ref{fig:performance-all} shows the experimental results for the two control algorithms and the baseline algorithm. We can conclude that STP provides the highest average quality level at the expense of high quality variance. This can be easily explained since STP tends to closely follow the bandwidth fluctuation. In contrast, LTP maintains a relatively low quality variance, at a little cost of average video quality. Although it is not as good as STP in terms of average quality, it still outperforms the baseline algorithm.
 
-Since STP and LTP have their own limitations, we implement the complete PID-based quality control algorithm, which can both reduce the quality variance and improve the average quality level. From the results shown in Fig. \ref{fig:performance-two}, we can conclude that when integrated with the integral part and the derivative part, the effect of the proportional part is not as aggressive as that in STP. An obvious proof can be found in Fig. \ref{fig:variance-two}, which clearly shows that the proposed PID quality control algorithm achieves a lower quality variance compared to the PDF algorithm. Table \ref{tab:improvement} lists the statistical experimental results for these four quality control algorithms, in which the PID-based control algorithm has shown its advantage over the others, especially in reducing the quality fluctuation. It can be seen that, compared to PDF, the PID-based quality control algorithm improves 8.6\% in video quality with a 24.8\% reduction in quality fluctuation. The video quality fluctuation of the four control algorithms, when the bandwidth fluctuates around 800 kbps, is shown in Fig. \ref{fig:fluctuation}, from which we can observe a more stable video quality in the proposed PID quality control algorithm.
-
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of different control algorithms]{
@@ -699,7 +697,6 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \label{fig:performance-two}
 \end{figure*}
 
-
 \begin{table*}[t]
 \centering
 \caption{Improvement of different quality control algorithms}
@@ -714,6 +711,7 @@ PID based control scheme(PID) & +8.6\% & \textbf{-24.8\%} \\ \hline
 \end{tabular}
 \end{table*}
 
+Since STP and LTP have their own limitations, we implement the complete PID-based quality control algorithm, which can both reduce the quality variance and improve the average quality level. From the results shown in Fig. \ref{fig:performance-two}, we can conclude that when integrated with the integral part and the derivative part, the effect of the proportional part is not as aggressive as that in STP. An obvious proof can be found in Fig. \ref{fig:variance-two}, which clearly shows that the proposed PID quality control algorithm achieves a lower quality variance compared to the PDF algorithm. Table \ref{tab:improvement} lists the statistical experimental results for these four quality control algorithms, in which the PID-based control algorithm has shown its advantage over the others, especially in reducing the quality fluctuation. It can be seen that, compared to PDF, the PID-based quality control algorithm improves 8.6\% in video quality with a 24.8\% reduction in quality fluctuation. The video quality fluctuation of the four control algorithms, when the bandwidth fluctuates around 800 kbps, is shown in Fig. \ref{fig:fluctuation}, from which we can observe a more stable video quality in the proposed PID quality control algorithm.
 
 \begin{figure}
 \centering
