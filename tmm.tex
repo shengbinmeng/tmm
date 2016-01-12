@@ -161,7 +161,7 @@
 \author{Shengbin~Meng, Jun~Sun, {\em Member, IEEE}, Yizhou~Duan and Zongming~Guo, {\em Member, IEEE} % <-this % stops a space
 \thanks{Manuscript received July 15, 2015; revised December 3, 2015 and January 12, 2016. This work was supported by  National Key Technology R\&D Program of China under Grant 2015AA011605 and National Natural Science Foundation of China under contract No. 61271020.}
 \thanks{The authors are with the Institute of Computer Science and Technology, Peking University, Beijing%
-, 100080, China (email: mengshengbin@pku.edu.cn, sunjun@pku.edu.cn, duanyizhou@pku.edu.cn, guozongming@pku.edu.cn). Jun Sun and Zongming Guo are also with the Cooperative Medianet Innovation Center, Shanghai, China. Jun Sun is the corresponding author.}}
+, 100080, China (email: mengshengbin@pku.edu.cn, sunjun@pku.edu.cn, duanyizhou@pku.edu.cn, guozongming@pku.edu.cn). Jun Sun and Zongming Guo are also with the Cooperative Medianet Innovation Center, Shanghai, 200240, China. Jun Sun is the corresponding author.}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
 % these prevent an unwanted space from occurring between the last author name
@@ -295,7 +295,7 @@ Bitstream extraction is the operation of choosing a subset of data packets from 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 1.0\linewidth]{Bitstream-Extraction.jpg}
+\includegraphics[width = 0.9\linewidth]{Bitstream-Extraction.jpg}
 \caption{Bitstream extraction of SVC \label{fig:Bitstream-Extraction}}
 \end{figure}
 
@@ -480,7 +480,7 @@ u(t) = {K_p} \cdot e(t) + {K_i} \cdot \int_0^t {e(\tau )d\tau }  + {K_d} \cdot \
 \end{equation}
 where $e(t)$ represents the error between the process variable and the setpoint at time $t$. $K_p$, $K_i$, and $K_d$ here are tuning parameters that represent the proportional gain, integral gain and derivative gain, respectively. The result of (\ref{eq:pid-output}) is used for manipulating the system to make the process variable change towards the setpoint.
 
-As an effective and flexible control technique, PID control has been used to solve many kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms (rate control in video coding mainly involves adjusting the encoding parameters for every frame, so that the bits are appropriately allocated and the desired bitrate is achieved) \cite{Wong04}\cite{Yang10}. We also notice that some researchers have proposed a theoretical model or middle-ware framework for QoS adaptation \cite{Li98}\cite{Li99}, with PID as the basic control scheme. However, we have not found any paper that integrates the PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. We are therefore inspired to design a PID-based quality control algorithm and utilize it to deliver better video quality to the user.
+As an effective and flexible control technique, PID control has been used to solve many kinds of control problems. In the area of video coding, we notice that PID is utilized to design rate control algorithms (rate control in video coding mainly involves adjusting the encoding parameters for every frame, so that the bits are appropriately allocated and the desired bitrate is achieved) \cite{Wong04}. We also notice that some researchers have proposed a theoretical model or middle-ware framework for QoS adaptation \cite{Li98} \cite{Li99}, with PID as the basic control scheme. However, we have not found any paper that integrates the PID method into the quality control of video streaming. While rate control of video coding and quality control of video streaming are two different problems, they do share some common properties, such as the buffer mechanism and the requirement for smoothness. We are therefore inspired to design a PID-based quality control algorithm and utilize it to deliver better video quality to the user.
 
 In this section, we first introduce the \textit{quality level} concept to discretize the bitrate and quality of a scalable video. Then we define the process variable used in our PID-based quality control algorithm. After that, the algorithm is formulated and explained in detail, followed by a brief discussion on parameter selection.
 
@@ -507,7 +507,7 @@ The \textit{actual\_check interval ratio} is suitable for use in quality control
 \subsection{Model Formulation}
 \label{subsec:model-formulation}
 
-As is introduced above, the \textit{actual\_check interval ratio} serves as the process variable in this PID-based quality control algorithm. In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that the chosen process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in the original PID equations have been properly changed to division operations for correctness, as follows:
+In normal PID control, the controller output is calculated using the proportion, integral and differential of the error between the process variable and the setpoint, as shown in (\ref{eq:pid-output}). Considering that the chosen process variable is a ratio and the corresponding setpoint is 1, we make a little modification to the general PID controller and obtain a ratio-based model. In this model, the ratio is directly used to calculate the controller output, and all subtraction operations in the original PID equations have been properly changed to division operations for correctness, as follows:
 
 \begin{equation}
 \label{eq:ut}
@@ -603,17 +603,17 @@ Regarding other bitstream extraction methods in addition to JSVM, the work in \c
 \begin{figure*}[t]
 \centering
 \subfloat[City]{
-\includegraphics[width=0.45\textwidth]{City.jpg}
+\includegraphics[width=0.42\textwidth]{City.jpg}
 \label{fig:City}}
 \subfloat[Foreman]{
-\includegraphics[width=0.45\textwidth]{Foreman.jpg}
+\includegraphics[width=0.42\textwidth]{Foreman.jpg}
 \label{fig:Foreman}}
 \qquad
 \subfloat[Harbour]{
-\includegraphics[width=0.45\textwidth]{Harbour.jpg}
+\includegraphics[width=0.42\textwidth]{Harbour.jpg}
 \label{fig:Harbour}}
 \subfloat[Soccer]{
-\includegraphics[width=0.45\textwidth]{Soccer.jpg}
+\includegraphics[width=0.42\textwidth]{Soccer.jpg}
 \label{fig:Soccer}}
 \caption{Performance of three bitstream extraction methods for various CIF sequences}
 \label{fig:extraction-performance}
@@ -678,10 +678,10 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of different control algorithms]{
-\includegraphics[width=0.42\textwidth]{Quality-all.png}
+\includegraphics[width=0.45\textwidth]{Quality-all.png}
 \label{fig:quality-all}}
 \subfloat[Quality level variance of different control algorithms]{
-\includegraphics[width=0.42\textwidth]{Variance-all.png}
+\includegraphics[width=0.45\textwidth]{Variance-all.png}
 \label{fig:variance-all}}
 \caption{Comparison of the long/short time prediction and the PDF algorithm in DSS}
 \label{fig:performance-all}
@@ -690,10 +690,10 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of the PID and PDF control algorithms]{
-\includegraphics[width=0.42\textwidth]{Quality-two.png}
+\includegraphics[width=0.45\textwidth]{Quality-two.png}
 \label{fig:quality-two}}
 \subfloat[Quality level variance of the PID and PDF control algorithms]{
-\includegraphics[width=0.42\textwidth]{Variance-two.png}
+\includegraphics[width=0.45\textwidth]{Variance-two.png}
 \label{fig:variance-two}}
 \caption{Comparison of the proposed PID algorithm and the PDF algorithm in DDS}
 \label{fig:performance-two}
@@ -892,9 +892,6 @@ K. J. Astrom, Control System Design, pp 216-219, 2002.
 
 \bibitem{Wong04}
 C.W.Wong, O.C.Au and H.K.Lam, ``PID-based real-time rate control'', {\em Proceedings of IEEE International Conference on Multimedia and Expo}, 1: 221-224, 2004.
-
-\bibitem{Yang10}
-J. Yang, Y. Sun, Y. Zhou, S. Sun, ``Incremental rate control for H.264 scalable video coding'', {\em IEEE Global Telecommunications Conference}, Miami, Florida, Dec. 2010.
 
 \bibitem{Li98}
 B. Li and K. Nahrstedt  ``A control theoretical model for quality of service adaptations'', {\em Proceedings of Sixth International Workshop on Quality of Service}, 1998.
