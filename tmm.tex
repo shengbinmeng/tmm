@@ -159,9 +159,9 @@
 % was not built to handle multiple paragraphs
 %
 \author{Shengbin~Meng, Jun~Sun, {\em Member, IEEE}, Yizhou~Duan and Zongming~Guo, {\em Member, IEEE} % <-this % stops a space
-\thanks{Manuscript received July 15, 2015; revised December 3, 2015.}
+\thanks{Manuscript received July 15, 2015; revised December 3, 2015 and January 12, 2016. This work was supported by  National Key Technology R\&D Program of China under Grant 2015AA011605 and National Natural Science Foundation of China under contract No. 61271020.}
 \thanks{The authors are with the Institute of Computer Science and Technology, Peking University, Beijing%
-, 100080, China (Email: mengshengbin@pku.edu.cn, sunjun@pku.edu.cn, duanyizhou@pku.edu.cn, guozongming@pku.edu.cn; Phone: +86 1082529615; Fax: +86 1082529207). Jun Sun is the corresponding author.}}
+, 100080, China (email: mengshengbin@pku.edu.cn, sunjun@pku.edu.cn, duanyizhou@pku.edu.cn, guozongming@pku.edu.cn). Jun Sun and Zongming Guo are also with the Cooperative Medianet Innovation Center, Shanghai, China. Jun Sun is the corresponding author.}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
 % these prevent an unwanted space from occurring between the last author name
@@ -913,7 +913,64 @@ G.~J.~Sullivan, J.-R.~Ohm, W.-J.~Han, and T.~Wiegand, ``Overview of the High Eff
 
 \end{thebibliography}
 
-\balance
+
+
+% biography section
+% 
+% If you have an EPS/PDF photo (graphicx package needed) extra braces are
+% needed around the contents of the optional argument to biography to prevent
+% the LaTeX parser from getting confused when it sees the complicated
+% \includegraphics command within an optional argument. (You could create
+% your own custom macro containing the \includegraphics command to make things
+% simpler here.)
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{ShengbinMeng.jpg}}]{Shengbin Meng}
+received the B.E. degree in automation engineering from Tsinghua University, Beijing, China, in 2011. He is currently working towards the Ph.D. degree in computer science at the Institute of Computer Science and Technology, Peking University, Beijing, China.
+
+His current research interests include video coding, codec implementation and optimization, video streaming, and multimedia applications.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{JunSun.jpg}}]{Jun Sun}
+(M’07) received the B.S. degree in computer science from the University of Science and Technology Beijing, Beijing, China, in 1999, and the Ph.D. degree in computer science from the Institute of Computing Technology, Chinese Academy of Sciences, Beijing, China, in 2006.
+
+From 2006 to 2008, he was a Post-Doctorate with the Institute of DigitalMedia, EECS, Peking University, Beijing, China. He then joined the Institute of Computer Science and Technology, Peking University, Beijing, China, where he is currently an Associate Professor. His research interests include scalable video coding, rate-distortion analysis, video transcoding, video streaming, and video scheduling in wireless networks. He has published over 30 technical articles in referred journals and proceedings in the areas of video coding and analysis.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{YizhouDuan.jpg}}]{Yizhou Duan}
+received the B.S. degree and the Ph.D degree in computer science from Peking University, Beijing, China, in 2009 and 2015, respectively. He is currently working for Strongene Ltd., Beijing, China.
+
+His current research interests include video coding, codec implementation and optimization, scalable video systems, and rate-distortion analysis.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{ZongmingGuo.jpg}}]{Zongming Guo}
+(M’09) received the B.S. degree in mathematics, and the M.S. and Ph.D. degrees in computer science from Peking University, Beijing, China, in 1987, 1990, and 1994, respectively.
+
+He is currently a Professor with the Institute of Computer Science and Technology, Peking University. His current research interests include video coding, processing, and communication.
+
+Dr. Guo is the Executive Member of the China-Society of Motion Picture and Television Engineers. He was a recipient of the First Prize of the State Administration of Radio Film and Television Award in 2004, the First Prize of the Ministry of Education Science and Technology Progress Award in 2006, the Second Prize of the National Science and Technology Award in 2007, the Wang Xuan News Technology Award and the Chia Tai Teaching Award in 2008, the Government Allowance granted by the State Council in 2009, and the Distinguished Doctoral Dissertation Advisor Award of Peking University in 2012 and 2013.
+
+\end{IEEEbiography}
+
+% if you will not have a photo at all:
+%\begin{IEEEbiographynophoto}{John Doe}
+%Biography text here.
+%\end{IEEEbiographynophoto}
+
+% insert where needed to balance the two columns on the last page with
+% biographies
+%\newpage
+
+% You can push biographies down or up by placing
+% a \vfill before or after them. The appropriate
+% use of \vfill depends on what kind of text is
+% on the last page and whether or not the columns
+% are being equalized.
+
+%\vfill
+
+% Can be used to pull up biographies so that the bottom of the last one
+% is flush with the other column.
+%\enlargethispage{-5in}
 
 % that's all folks
 \end{document}
