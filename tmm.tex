@@ -669,7 +669,7 @@ For simplicity and intuition, in the experiments for the quality control algorit
 \end{tabular}
 \end{table*}
 
-We simulate the bandwidth fluctuation by adjusting the bandwidth around a certain level. We set this level from 400 to 1400 kbps to reflect different average bandwidth values. The simulation is implemented with NetLimiter 3 \cite{Netlimiter}, where the bandwidth varies randomly and intense fluctuations are observed. Under the bandwidth fluctuation, the streaming system with a certain quality control algorithm runs for 10 minutes, during which the selected quality levels are recorded. The video quality measured by average of the quality levels, and the quality smoothness indicated by the variance of the quality levels are used for performance comparison. The baseline algorithm in the comparison refers to the packet delay feedback (PDF) algorithm in the original DSS.
+We simulate the bandwidth fluctuation by adjusting the bandwidth around a certain level. We set this level from 400 to 1400 kbps to reflect different average bandwidth values (note that the bandwidth may reach a value lower than 400 kbps or higher than 1400 kbps since the level values are averages instead of bounds; in other words, the covered bandwidth range is larger than [400, 1400]). The simulation is implemented with NetLimiter 3 \cite{Netlimiter}, where the bandwidth varies randomly and intense fluctuations are observed. Under the bandwidth fluctuation, the streaming system with a certain quality control algorithm runs for 10 minutes, during which the selected quality levels are recorded. The video quality measured by average of the quality levels, and the quality smoothness indicated by the variance of the quality levels are used for performance comparison. The baseline algorithm in the comparison refers to the packet delay feedback (PDF) algorithm in the original DSS.
 
 We first conduct some preliminary improvement experiments using only the proportional part or integral part of the PID model. Because the two parts are related to the current short-term error and the accumulated long-term error, we call them Short-Term Prediction (STP) and Long-Term Prediction (LTP), respectively. Fig. \ref{fig:performance-all} shows the experimental results for the two control algorithms and the baseline algorithm. We can conclude that STP provides the highest average quality level at the expense of high quality variance. This can be easily explained since STP tends to closely follow the bandwidth fluctuation. In contrast, LTP maintains a relatively low quality variance, at a little cost of average video quality. Although it is not as good as STP in terms of average quality, it still outperforms the baseline algorithm.
 
@@ -678,10 +678,10 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of different control algorithms]{
-\includegraphics[width=0.45\textwidth]{Quality-all.png}
+\includegraphics[width=0.42\textwidth]{Quality-all.png}
 \label{fig:quality-all}}
 \subfloat[Quality level variance of different control algorithms]{
-\includegraphics[width=0.45\textwidth]{Variance-all.png}
+\includegraphics[width=0.42\textwidth]{Variance-all.png}
 \label{fig:variance-all}}
 \caption{Comparison of the long/short time prediction and the PDF algorithm in DSS}
 \label{fig:performance-all}
@@ -690,10 +690,10 @@ Since STP and LTP have their own limitations, we implement the complete PID-base
 \begin{figure*}[t]
 \centering
 \subfloat[Average quality level of the PID and PDF control algorithms]{
-\includegraphics[width=0.45\textwidth]{Quality-two.png}
+\includegraphics[width=0.42\textwidth]{Quality-two.png}
 \label{fig:quality-two}}
 \subfloat[Quality level variance of the PID and PDF control algorithms]{
-\includegraphics[width=0.45\textwidth]{Variance-two.png}
+\includegraphics[width=0.42\textwidth]{Variance-two.png}
 \label{fig:variance-two}}
 \caption{Comparison of the proposed PID algorithm and the PDF algorithm in DDS}
 \label{fig:performance-two}
