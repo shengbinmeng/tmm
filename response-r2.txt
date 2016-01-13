@@ -1,6 +1,6 @@
 Response to the reviewer comments of Paper MM-006412-R1: Adaptive Video Streaming with Optimized Bitstream Extraction and PID-based Quality Control by Shengbin Meng, Jun Sun, Yizhou Duan and Zongming Guo.
 
-We would like to thank the reviewers for their help to make this paper better. We would also like to thank the associate editor for coordinating the review process. We have read the reviewer comments carefully, and tried to follow the suggestions as closely as possible. In this revision, we have also used a professional editing service to help refine and polish this paper regarding English usage.
+We would like to thank the reviewers for their help to make this paper better. We would also like to thank the associate editor for coordinating the review process. We have read the reviewer comments carefully, and tried to follow the suggestions as closely as possible. In this revision, we have also used a professional editing service to help refine and polish this paper regarding English usage (receipt from the editing service is attached).
 
 Reviewer: 1
 
@@ -18,7 +18,7 @@ In future submission for a revised paper, it would be better if the authors can 
 
 Response:
 
-We have used a professional editing service to polish the language of this paper so that grammar flaws and typos (including the mentioned one) are corrected.
+We have used a professional editing service to polish this paper so that grammar flaws and typos (including the mentioned one) are corrected.
 
 This revision includes many small updates about language usage as a result of the editing service, so it may be not appropriate to mark them in this response. We will follow your suggestion in future submission for a revised paper.
 
